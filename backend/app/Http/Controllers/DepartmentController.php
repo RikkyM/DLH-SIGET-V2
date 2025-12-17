@@ -12,11 +12,21 @@ class DepartmentController extends Controller
         $q = trim((string) $request->query('q', ''));
 
         $departments =  Department::query()
+            ->with(['titikSampah' => fn($q) => $q->whereNotNull('latitude')
+                ->whereNotNull('longitude')->where('latitude', '!=', '')->where('longitude', '!=', '')])
             ->select('id', 'nama')
+            ->where(function ($q) {
+                $q->where('nama', '!=', 'Our Company')
+                    ->where('nama', '!=', 'NON AKTIF')
+                    ->where('nama', '!=', 'SEKRETARIAT');
+            })
             ->when($q, fn($qq) => $qq->where('nama', 'like', "%{$q}%"))
             ->orderBy('nama')
             ->get()
-            ->map(fn($d) => ['value' => (string) $d->id, 'label' => $d->nama]);
+            ->map(fn($d) => ['value' => (string) $d->id, 'label' => $d->nama, 'count' => $d->titikSampah->count()])
+            ->values();
+
+        // dd($departments);
 
         // $penugasan = Penugasan::query()
         //     ->select('id', 'nama')

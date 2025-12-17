@@ -1,11 +1,12 @@
-import { http } from "@/services/http.services";
+import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
+import { http } from "@/services/http.services";
+import type { LatLngExpression } from "leaflet";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import MultiSelectDropdown, {
   type MultiSelectOption,
 } from "@/components/ui/MultiSelectDropdown";
-import axios from "axios";
-import type { LatLngExpression } from "leaflet";
+import logo from "@/assets/img/dlh-logo.webp";
 
 type FiltersDepartmentsResponse = {
   departments: MultiSelectOption[];
@@ -15,43 +16,77 @@ type FiltersPenugasanResponse = {
   penugasan: MultiSelectOption[];
 };
 
-type PetugasMarker = {
+type FiltersPenampunganResponse = {
+  penampungan: MultiSelectOption[];
+};
+
+type FiltersLambungResponse = {
+  lambung: MultiSelectOption[];
+};
+
+type MapMarker = {
   id: number;
   nama: string;
   latitude: string | number;
   longitude: string | number;
+  type: "petugas" | "titik_sampah";
   id_department: number | null;
   id_penugasan: number | null;
+  rute_kerja: string;
 };
 
 const getDepartmentFilters = async () => {
-  const res = await http.get<FiltersDepartmentsResponse>("/api/filters/departments", {
-    headers: { Accept: "application/json" },
-  });
+  const res = await http.get<FiltersDepartmentsResponse>(
+    "/api/filters/departments",
+    {
+      headers: { Accept: "application/json" },
+    },
+  );
   return res.data;
 };
 
 const getPenugasanFilters = async () => {
-  const res = await http.get<FiltersPenugasanResponse>("/api/filters/penugasan", {
+  const res = await http.get<FiltersPenugasanResponse>(
+    "/api/filters/penugasan",
+    {
+      headers: { Accept: "application/json" },
+    },
+  );
+  return res.data;
+};
+
+const getPenampunganFilters = async () => {
+  const res = await http.get<FiltersPenampunganResponse>(
+    "/api/filters/penampungan",
+    {
+      headers: { Accept: "application/json" },
+    },
+  );
+  return res.data;
+};
+
+const getLambungFilters = async () => {
+  const res = await http.get<FiltersLambungResponse>("/api/filters/lambung", {
     headers: { Accept: "application/json" },
   });
   return res.data;
 };
 
-const getPetugasMarkers = async (params: {
+const getMapMarkers = async (params: {
   department: string[];
   penugasan: string[];
+  penampungan: string[]; // id_jts
+  lambung: string[]; // armada
 }) => {
-  const res = await http.get<{ data: PetugasMarker[] }>(
-    "/api/homepage/map",
-    {
-      params: {
-        department: params.department, // axios => department[]=1&department[]=2
-        penugasan: params.penugasan,
-      },
-      headers: { Accept: "application/json" },
+  const res = await http.get<{ data: MapMarker[] }>("/api/homepage/map", {
+    params: {
+      department: params.department,
+      penugasan: params.penugasan,
+      penampungan: params.penampungan,
+      lambung: params.lambung,
     },
-  );
+    headers: { Accept: "application/json" },
+  });
   return res.data.data;
 };
 
@@ -60,18 +95,22 @@ const Homepage = () => {
 
   const [optDepartment, setOptDepartment] = useState<MultiSelectOption[]>([]);
   const [optPenugasan, setOptPenugasan] = useState<MultiSelectOption[]>([]);
+  const [optPenampungan, setOptPenampungan] = useState<MultiSelectOption[]>([]);
+  const [optLambung, setOptLambung] = useState<MultiSelectOption[]>([]);
 
   const [departmentIds, setDepartmentIds] = useState<string[]>([]);
   const [penugasanIds, setPenugasanIds] = useState<string[]>([]);
+  const [penampunganIds, setPenampunganIds] = useState<string[]>([]);
+  const [lambungIds, setLambungIds] = useState<string[]>([]);
 
   const [loadingFilters, setLoadingFilters] = useState(false);
   const [errorFilters, setErrorFilters] = useState<string | null>(null);
 
-  console.log(errorFilters)
+  console.log(errorFilters);
 
-  const [markers, setMarkers] = useState<PetugasMarker[]>([]);
-  const [loadingMarkers, setLoadingMarkers] = useState(false);
-  const [errorMarkers, setErrorMarkers] = useState<string | null>(null);
+  const [markers, setMarkers] = useState<MapMarker[]>([]);
+  // const [loadingMarkers, setLoadingMarkers] = useState(false);
+  // const [errorMarkers, setErrorMarkers] = useState<string | null>(null);
 
   // load dropdown options
   useEffect(() => {
@@ -84,16 +123,20 @@ const Homepage = () => {
       try {
         const department = await getDepartmentFilters();
         const penugasan = await getPenugasanFilters();
+        const penampungan = await getPenampunganFilters();
+        const lambung = await getLambungFilters();
         if (!alive) return;
 
         setOptDepartment(department.departments ?? []);
         setOptPenugasan(penugasan.penugasan ?? []);
+        setOptPenampungan(penampungan.penampungan ?? []);
+        setOptLambung(lambung.lambung ?? []);
       } catch (e: unknown) {
         if (!alive) return;
         if (axios.isAxiosError(e)) {
-            setErrorFilters(
-              e?.response?.data?.message ?? e?.message ?? "Gagal load filters",
-            );
+          setErrorFilters(
+            e?.response?.data?.message ?? e?.message ?? "Gagal load filters",
+          );
         }
       } finally {
         if (alive) setLoadingFilters(false);
@@ -110,33 +153,35 @@ const Homepage = () => {
     let alive = true;
 
     (async () => {
-      setLoadingMarkers(true);
-      setErrorMarkers(null);
+      // setLoadingMarkers(true);
+      // setErrorMarkers(null);
 
       try {
-        const data = await getPetugasMarkers({
+        const data = await getMapMarkers({
           department: departmentIds,
           penugasan: penugasanIds,
+          penampungan: penampunganIds,
+          lambung: lambungIds,
         });
         if (!alive) return;
 
         setMarkers(data);
-      } catch (e: unknown) {
+      } catch {
         if (!alive) return;
-        if (axios.isAxiosError(e)) {
-            setErrorMarkers(
-              e?.response?.data?.message ?? e?.message ?? "Gagal load marker",
-            );
-        }
+        // if (axios.isAxiosError(e)) {
+        //   setErrorMarkers(
+        //     e?.response?.data?.message ?? e?.message ?? "Gagal load marker",
+        //   );
+        // }
       } finally {
-        if (alive) setLoadingMarkers(false);
+        // if (alive) setLoadingMarkers(false);
       }
     })();
 
     return () => {
       alive = false;
     };
-  }, [departmentIds, penugasanIds]);
+  }, [departmentIds, penugasanIds, penampunganIds, lambungIds]);
 
   const leafletMarkers = useMemo(() => {
     return markers
@@ -146,29 +191,47 @@ const Homepage = () => {
         if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
         return { ...m, lat, lng };
       })
-      .filter(Boolean) as Array<PetugasMarker & { lat: number; lng: number }>;
+      .filter(Boolean) as Array<MapMarker & { lat: number; lng: number }>;
   }, [markers]);
 
   return (
     <section className="h-[calc(100dvh-200px)] w-full p-4">
       <div className="relative z-10 mb-3 grid grid-cols-1 gap-2 md:grid-cols-4">
         <MultiSelectDropdown
-          label="Department"
-          placeholder={loadingFilters ? "Loading..." : "Pilih Department"}
+          label="Wilayah UPTD"
+          placeholder={loadingFilters ? "Loading..." : "Pilih Wilayah"}
           options={optDepartment}
           value={departmentIds}
           onChange={setDepartmentIds}
         />
 
         <MultiSelectDropdown
-          label="Penugasan"
-          placeholder={loadingFilters ? "Loading..." : "Pilih Penugasan"}
+          label="Petugas Kebersihan"
+          placeholder={
+            loadingFilters ? "Loading..." : "Pilih Petugas Kebersihan"
+          }
           options={optPenugasan}
           value={penugasanIds}
           onChange={setPenugasanIds}
         />
+        <MultiSelectDropdown
+          label="Penampungan Sampah"
+          placeholder={
+            loadingFilters ? "Loading..." : "Pilih Penampungan Sampah"
+          }
+          options={optPenampungan}
+          value={penampunganIds}
+          onChange={setPenampunganIds}
+        />
+        <MultiSelectDropdown
+          label="Nomor Plat"
+          placeholder={loadingFilters ? "Loading..." : "Pilih Nomor Plat"}
+          options={optLambung}
+          value={lambungIds}
+          onChange={setLambungIds}
+        />
 
-        <div className="rounded-md border border-slate-200 bg-white p-3 text-xs text-slate-600">
+        {/* <div className="rounded-md border border-slate-200 bg-white p-3 text-xs text-slate-600">
           <div>Marker: {leafletMarkers.length}</div>
           {loadingMarkers ? (
             <div className="mt-1">Loading marker...</div>
@@ -176,7 +239,7 @@ const Homepage = () => {
           {errorMarkers ? (
             <div className="mt-1 text-red-600">{errorMarkers}</div>
           ) : null}
-        </div>
+        </div> */}
       </div>
 
       <MapContainer
@@ -186,11 +249,11 @@ const Homepage = () => {
         style={{ height: "100%", width: "100%", zIndex: "0" }}
       >
         <TileLayer
-        //   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          //   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {leafletMarkers.map((m) => (
+        {/* {leafletMarkers.map((m) => (
           <Marker key={m.id} position={[m.lat, m.lng]}>
             <Popup>
               <div className="space-y-1">
@@ -201,6 +264,26 @@ const Homepage = () => {
                 </div>
                 <div className="text-xs">
                   {m.lat}, {m.lng}
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        ))} */}
+        {leafletMarkers.map((m) => (
+          <Marker key={`${m.type}-${m.id}`} position={[m.lat, m.lng]}>
+            <Popup>
+              <div className="flex items-start gap-3">
+                <img
+                  src={logo}
+                  alt="logo"
+                  className="h-12 w-12 shrink-0 rounded object-contain"
+                />
+
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-semibold">{m.nama}</div>
+                  <div className="text-xs text-slate-600">
+                    Rute Kerja: {m?.rute_kerja ?? "-"}
+                  </div>
                 </div>
               </div>
             </Popup>

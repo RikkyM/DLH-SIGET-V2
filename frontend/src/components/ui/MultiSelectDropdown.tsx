@@ -3,10 +3,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 export type MultiSelectOption = {
   value: string;
   label: string;
+  count: number;
 };
 
 type Props = {
   label?: string;
+  count?: number;
   placeholder?: string;
   options: MultiSelectOption[];
   value: string[]; // selected values
@@ -47,6 +49,14 @@ export default function MultiSelectDropdown({
   };
 
   const clearAll = () => onChange([]);
+
+  // ✅ Toggle 1 tombol: Check all / Uncheck all
+  const allValues = useMemo(() => options.map((o) => o.value), [options]);
+  const allSelected = value.length > 0 && value.length === options.length;
+
+  const toggleAll = () => {
+    onChange(allSelected ? [] : allValues);
+  };
 
   // close on outside click
   useEffect(() => {
@@ -113,7 +123,9 @@ export default function MultiSelectDropdown({
           ) : null}
 
           <svg
-            className={`h-4 w-4 text-slate-500 transition ${open ? "rotate-180" : ""}`}
+            className={`h-4 w-4 text-slate-500 transition ${
+              open ? "rotate-180" : ""
+            }`}
             viewBox="0 0 20 20"
             fill="currentColor"
             aria-hidden="true"
@@ -169,7 +181,9 @@ export default function MultiSelectDropdown({
                       onChange={() => toggleValue(opt.value)}
                       className="h-4 w-4 rounded border-slate-300"
                     />
-                    <span className="flex-1 text-slate-700">{opt.label}</span>
+                    <span className="flex-1 text-slate-700">
+                      {opt.label} {opt.count}
+                    </span>
 
                     {checked ? (
                       <span className="text-xs text-slate-500">✓</span>
@@ -181,10 +195,18 @@ export default function MultiSelectDropdown({
           </div>
 
           <div className="flex items-center justify-between gap-2 border-t border-slate-100 p-2">
-            <span className="text-xs text-slate-500">
-              {value.length}/{options.length} dipilih
-            </span>
-
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500">
+                {value.length}/{options.length} dipilih
+              </span>
+              <button
+                type="button"
+                onClick={toggleAll}
+                className="rounded-md px-2 py-1 text-xs text-slate-600 hover:bg-slate-100"
+              >
+                {allSelected ? "Hapus semua centang" : "Pilih Semua"}
+              </button>
+            </div>
             <button
               type="button"
               onClick={() => setOpen(false)}

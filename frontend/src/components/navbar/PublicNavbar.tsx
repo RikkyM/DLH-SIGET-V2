@@ -1,5 +1,5 @@
-import logo from "@/assets/img/dlh-logo.webp";
 import { NavLink } from "react-router-dom";
+import logo from "@/assets/img/dlh-logo.webp";
 
 const PublicNavbar = () => {
   return (

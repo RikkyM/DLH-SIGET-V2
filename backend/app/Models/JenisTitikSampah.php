@@ -11,4 +11,9 @@ class JenisTitikSampah extends Model
     protected $fillable = [
         'nama'
     ];
+
+    public function titikSampah()
+    {
+        return $this->hasMany(TitikSampah::class, 'id_jts');
+    }
 }

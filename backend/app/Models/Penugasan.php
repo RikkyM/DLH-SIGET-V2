@@ -11,4 +11,10 @@ class Penugasan extends Model
     protected $fillable = [
         'nama'
     ];
+
+    public function petugas()
+    {
+        return $this->hasMany(Petugas::class, 'id_penugasan');
+    }
 }
+

@@ -19,11 +19,17 @@ class PenugasanController extends Controller
         //     ->map(fn($d) => ['value' => (string) $d->id, 'label' => $d->nama]);
 
         $penugasan = Penugasan::query()
+            ->with(['petugas' => fn($q) => $q->whereNotNull('latitude')
+                ->whereNotNull('longitude')
+                ->where('latitude', '!=', '')
+                ->where('longitude', '!=', '')])
             ->select('id', 'nama')
             ->when($q, fn($qq) => $qq->where('nama', 'like', "%{$q}%"))
             ->orderBy('nama')
             ->get()
-            ->map(fn($d) => ['value' => (string) $d->id, 'label' => $d->nama]);
+            ->map(fn($d) => ['value' => (string) $d->id, 'label' => $d->nama, 'count' => $d->petugas->count()]);
+
+        // dd($penugasan);
 
         return response()->json([
             // 'departments' => $departments,
