@@ -4,6 +4,8 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import MultiSelectDropdown, {
   type MultiSelectOption,
 } from "@/components/ui/MultiSelectDropdown";
+import axios from "axios";
+import type { LatLngExpression } from "leaflet";
 
 type FiltersDepartmentsResponse = {
   departments: MultiSelectOption[];
@@ -54,7 +56,7 @@ const getPetugasMarkers = async (params: {
 };
 
 const Homepage = () => {
-  const center: [number, number] = [-2.9761, 104.7754];
+  const center: LatLngExpression = [-2.9761, 104.7754];
 
   const [optDepartment, setOptDepartment] = useState<MultiSelectOption[]>([]);
   const [optPenugasan, setOptPenugasan] = useState<MultiSelectOption[]>([]);
@@ -64,6 +66,8 @@ const Homepage = () => {
 
   const [loadingFilters, setLoadingFilters] = useState(false);
   const [errorFilters, setErrorFilters] = useState<string | null>(null);
+
+  console.log(errorFilters)
 
   const [markers, setMarkers] = useState<PetugasMarker[]>([]);
   const [loadingMarkers, setLoadingMarkers] = useState(false);
@@ -84,11 +88,13 @@ const Homepage = () => {
 
         setOptDepartment(department.departments ?? []);
         setOptPenugasan(penugasan.penugasan ?? []);
-      } catch (e: any) {
+      } catch (e: unknown) {
         if (!alive) return;
-        setErrorFilters(
-          e?.response?.data?.message ?? e?.message ?? "Gagal load filters",
-        );
+        if (axios.isAxiosError(e)) {
+            setErrorFilters(
+              e?.response?.data?.message ?? e?.message ?? "Gagal load filters",
+            );
+        }
       } finally {
         if (alive) setLoadingFilters(false);
       }
@@ -115,11 +121,13 @@ const Homepage = () => {
         if (!alive) return;
 
         setMarkers(data);
-      } catch (e: any) {
+      } catch (e: unknown) {
         if (!alive) return;
-        setErrorMarkers(
-          e?.response?.data?.message ?? e?.message ?? "Gagal load marker",
-        );
+        if (axios.isAxiosError(e)) {
+            setErrorMarkers(
+              e?.response?.data?.message ?? e?.message ?? "Gagal load marker",
+            );
+        }
       } finally {
         if (alive) setLoadingMarkers(false);
       }
@@ -173,12 +181,12 @@ const Homepage = () => {
 
       <MapContainer
         center={center}
-        zoom={13}
+        zoom={12}
         scrollWheelZoom
         style={{ height: "100%", width: "100%", zIndex: "0" }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        //   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
