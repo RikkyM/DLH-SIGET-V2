@@ -91,7 +91,7 @@ class FilterController extends Controller
 
         $titikSampah = $shouldLoadTitik
             ? TitikSampah::query()
-            ->select('id', 'nama', 'latitude', 'longitude', 'id_department', 'id_jts', 'armada', 'rute_kerja')
+            ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_jts', 'armada', 'rute_kerja', 'vol_sampah')
             ->whereNotNull('latitude')->whereNotNull('longitude')
             ->where('latitude', '!=', '')->where('longitude', '!=', '')
             ->when(!empty($departmentIds), fn($q) => $q->whereIn('id_department', $departmentIds))
@@ -108,7 +108,10 @@ class FilterController extends Controller
                 'id_penugasan' => null,
                 'id_jts' => $t->id_jts,
                 'armada' => $t->armada,
-                'rute_kerja' => $t->rute_kerja
+                'rute_kerja' => $t->rute_kerja,
+                'nama_jalan' => $t->nama_jalan,
+                'vol_sampah' => $t->vol_sampah,
+                'panjang_jalur' => null,
             ])
             : collect();
 
@@ -116,7 +119,7 @@ class FilterController extends Controller
         $petugas = empty($penugasanIds)
             ? collect()
             : Petugas::query()
-            ->select('id', 'nama', 'latitude', 'longitude', 'id_department', 'id_penugasan', 'rute_kerja')
+            ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_penugasan', 'rute_kerja', 'panjang_jalur')
             ->whereNotNull('latitude')->whereNotNull('longitude')
             ->where(
                 'latitude',
@@ -133,7 +136,10 @@ class FilterController extends Controller
                 'type' => 'petugas',
                 'id_department' => $p->id_department,
                 'id_penugasan' => $p->id_penugasan,
-                'rute_kerja' => $p->rute_kerja
+                'rute_kerja' => $p->rute_kerja,
+                'nama_jalan' => $p->nama_jalan,
+                'vol_sampah' => null,
+                'panjang_jalur' => $p->panjang_jalur
             ]);
 
         return response()->json([
