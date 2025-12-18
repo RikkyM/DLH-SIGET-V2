@@ -91,7 +91,8 @@ class FilterController extends Controller
 
         $titikSampah = $shouldLoadTitik
             ? TitikSampah::query()
-            ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_jts', 'armada', 'rute_kerja', 'vol_sampah')
+            ->with('jenisTitikSampah', 'jenisKendaraan')
+            ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_jts', 'id_jk', 'armada', 'rute_kerja', 'vol_sampah', 'kecamatan', 'kelurahan')
             ->whereNotNull('latitude')->whereNotNull('longitude')
             ->where('latitude', '!=', '')->where('longitude', '!=', '')
             ->when(!empty($departmentIds), fn($q) => $q->whereIn('id_department', $departmentIds))
@@ -108,10 +109,16 @@ class FilterController extends Controller
                 'id_penugasan' => null,
                 'id_jts' => $t->id_jts,
                 'armada' => $t->armada,
+                'lambung' => $t->kendaraan->lambung,
+                'no_plat' => $t->kendaraan->no_plat,
                 'rute_kerja' => $t->rute_kerja,
                 'nama_jalan' => $t->nama_jalan,
                 'vol_sampah' => $t->vol_sampah,
                 'panjang_jalur' => null,
+                'kecamatan' => strtolower($t->kecamatan),
+                'kelurahan' => strtolower($t->kelurahan),
+                'jenis' => $t->jenisTitikSampah->nama,
+                'jenis_kendaraan' => $t?->jenisKendaraan->nama ?? null
             ])
             : collect();
 
@@ -119,7 +126,8 @@ class FilterController extends Controller
         $petugas = empty($penugasanIds)
             ? collect()
             : Petugas::query()
-            ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_penugasan', 'rute_kerja', 'panjang_jalur')
+            ->with('kendaraan.jenisKendaraan')
+            ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_penugasan', 'rute_kerja', 'panjang_jalur', 'nama_kecamatan', 'nama_kelurahan')
             ->whereNotNull('latitude')->whereNotNull('longitude')
             ->where(
                 'latitude',
@@ -139,7 +147,11 @@ class FilterController extends Controller
                 'rute_kerja' => $p->rute_kerja,
                 'nama_jalan' => $p->nama_jalan,
                 'vol_sampah' => null,
-                'panjang_jalur' => $p->panjang_jalur
+                'panjang_jalur' => $p->panjang_jalur,
+                'kecamatan' => strtolower($p->nama_kecamatan),
+                'kelurahan' => $p->nama_kelurahan ? strtolower($p->nama_kelurahan) : "-",
+                'jenis' => null,
+                'jenis_kendaraan' => $p->jenisKendaraan->nama ?? null
             ]);
 
         return response()->json([

@@ -18,6 +18,11 @@ class TitikSampah extends Model
         return $this->belongsTo(JenisTitikSampah::class, 'id_jts');
     }
 
+    public function jenisKendaraan()
+    {
+        return $this->belongsTo(JenisKendaraan::class, 'id_jk');
+    }
+
     public function kendaraan()
     {
         return $this->belongsTo(DataKendaraan::class, 'armada', 'no_plat');

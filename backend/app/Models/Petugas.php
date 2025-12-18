@@ -39,4 +39,9 @@ class Petugas extends Model
     {
         return $this->belongsTo(Penugasan::class, 'id_penugasan');
     }
+
+    public function kendaraan()
+    {
+        return $this->belongsTo(DataKendaraan::class, 'id_kendaraan');
+    }
 }
