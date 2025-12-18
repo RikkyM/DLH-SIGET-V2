@@ -33,7 +33,7 @@ const LoginPage = () => {
         </div>
         {error && (
           <p className="text-center text-xs text-red-500">
-            Terjadi kesalahan pada server.
+            {error}
           </p>
         )}
         <form onSubmit={handleSubmit} className="w-full space-y-3">

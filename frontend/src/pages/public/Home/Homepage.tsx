@@ -33,12 +33,22 @@ type MapMarker = {
   id_department: number | null;
   id_penugasan: number | null;
   rute_kerja: string;
+  nama_jalan: string;
+  kecamatan?: string;
+  kelurahan?: string;
+  vol_sampah: string;
+  panjang_jalur: string;
+  jenis: string;
+  no_plat: string;
+  lambung: string;
+  jenis_kendaraan: string;
 };
 
 const getDepartmentFilters = async () => {
   const res = await http.get<FiltersDepartmentsResponse>(
     "/api/filters/departments",
     {
+      withCredentials: false,
       headers: { Accept: "application/json" },
     },
   );
@@ -49,6 +59,7 @@ const getPenugasanFilters = async () => {
   const res = await http.get<FiltersPenugasanResponse>(
     "/api/filters/penugasan",
     {
+      withCredentials: false,
       headers: { Accept: "application/json" },
     },
   );
@@ -59,6 +70,7 @@ const getPenampunganFilters = async () => {
   const res = await http.get<FiltersPenampunganResponse>(
     "/api/filters/penampungan",
     {
+      withCredentials: false,
       headers: { Accept: "application/json" },
     },
   );
@@ -67,6 +79,7 @@ const getPenampunganFilters = async () => {
 
 const getLambungFilters = async () => {
   const res = await http.get<FiltersLambungResponse>("/api/filters/lambung", {
+    withCredentials: false,
     headers: { Accept: "application/json" },
   });
   return res.data;
@@ -203,6 +216,7 @@ const Homepage = () => {
           options={optDepartment}
           value={departmentIds}
           onChange={setDepartmentIds}
+          showCount={false}
         />
 
         <MultiSelectDropdown
@@ -280,10 +294,41 @@ const Homepage = () => {
                 />
 
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-semibold">{m.nama}</div>
-                  <div className="text-xs text-slate-600">
-                    Rute Kerja: {m?.rute_kerja ?? "-"}
+                  <div className="font-semibold">{m.nama}</div>
+                  {m.type === "titik_sampah" && (
+                    <>
+                      <div className="text-xs text-slate-600">
+                        Jenis: {m?.jenis ?? "-"}
+                      </div>
+                      <div className="text-xs text-slate-600">
+                        No TNKB dan No Lambung: {m?.no_plat ?? "-"},{" "}
+                        {m?.lambung}
+                      </div>
+                      <div className="text-xs text-slate-600">
+                        Jenis Kendaraan: {m?.jenis_kendaraan ?? "-"}
+                      </div>
+                    </>
+                  )}
+                  <div className="capitalize">
+                    Lokasi: {m.nama_jalan}, {m?.kecamatan ?? "-"},{" "}
+                    {m?.kelurahan ?? "-"}
                   </div>
+                  {m.rute_kerja && (
+                    <div className="text-xs text-slate-600">
+                      Rute Kerja: {m?.rute_kerja ?? "-"}
+                    </div>
+                  )}
+                  {m.type === "petugas" && (
+                    <div className="text-xs text-slate-600">
+                      Panjang Rute:{" "}
+                      {m?.panjang_jalur ? `${m.panjang_jalur} M` : "-"}
+                    </div>
+                  )}
+                  {m.vol_sampah && (
+                    <div className="text-xs text-slate-600">
+                      Volume Sampah: {m?.vol_sampah ?? "-"}
+                    </div>
+                  )}
                 </div>
               </div>
             </Popup>

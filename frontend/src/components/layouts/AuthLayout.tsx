@@ -16,7 +16,7 @@ const AuthLayout = () => {
             <h3 className="font-medium">Sistem Informasi geografis</h3>
             <h3 className="font-medium">Petugas dan TPS</h3>
           </div>
-          <div className="grid grid-cols-3 place-items-center gap-5">
+          {/* <div className="grid grid-cols-3 place-items-center gap-5">
             <div className="w-full rounded border border-black/20 bg-white/50 p-3 text-center font-medium shadow-black">
               <p>250+</p>
               <p>TPS Terdaftar</p>
@@ -29,7 +29,7 @@ const AuthLayout = () => {
               <p>24/7</p>
               <p>Monitoring</p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>

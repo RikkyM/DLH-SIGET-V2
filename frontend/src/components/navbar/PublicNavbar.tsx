@@ -9,7 +9,7 @@ const PublicNavbar = () => {
         <div>
           <h4 className="text-xl font-medium">SIGET V2</h4>
           <h5 className="font-medium text-gray-500">
-            Sistem Informasi Geografis
+            Sistem Informasi Geografis Petugas dan TPS
           </h5>
         </div>
       </div>

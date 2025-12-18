@@ -14,6 +14,7 @@ type Props = {
   value: string[]; // selected values
   onChange: (next: string[]) => void;
   className?: string;
+  showCount?: boolean;
 };
 
 export default function MultiSelectDropdown({
@@ -23,6 +24,7 @@ export default function MultiSelectDropdown({
   value,
   onChange,
   className = "",
+  showCount = true,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -170,10 +172,7 @@ export default function MultiSelectDropdown({
                 return (
                   <label
                     key={opt.value}
-                    className={[
-                      "flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm",
-                      "hover:bg-slate-50",
-                    ].join(" ")}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-slate-50"
                   >
                     <input
                       type="checkbox"
@@ -181,8 +180,14 @@ export default function MultiSelectDropdown({
                       onChange={() => toggleValue(opt.value)}
                       className="h-4 w-4 rounded border-slate-300"
                     />
+
                     <span className="flex-1 text-slate-700">
-                      {opt.label} {opt.count}
+                      {opt.label}
+                      {showCount ? (
+                        <span className="ml-2 text-xs text-slate-500">
+                          (Jumlah {opt.count})
+                        </span>
+                      ) : null}
                     </span>
 
                     {checked ? (

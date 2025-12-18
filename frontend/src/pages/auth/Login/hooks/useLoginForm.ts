@@ -29,8 +29,9 @@ export const useLoginForm = () => {
     setError("");
 
     try {
-      await login(formData);
+      const res = await login(formData);
       navigate("/dashboard");
+      console.log(res)
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(
@@ -40,6 +41,8 @@ export const useLoginForm = () => {
         setError("Terjadi kesalahan pada server.");
       }
       setFormData((prev) => ({ ...prev, password: "" }));
+    } finally {
+      setLoading(false);
     }
   };
 
