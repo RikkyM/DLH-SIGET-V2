@@ -86,16 +86,28 @@ class FilterController extends Controller
         $penampunganIds  = array_values(array_map('intval', array_filter($penampunganIds, fn($v) => $v !== null && $v !== '')));
         $lambungIds     = array_values(array_map(fn($v) => trim((string)$v), array_filter($lambungIds, fn($v) => $v !== null && $v !== '')));
 
-        // Titik Sampah hanya kalau department dipilih
-        $shouldLoadTitik = !empty($departmentIds) || !empty($penampunganIds) || !empty($lambungIds);
+        // $shouldLoadTitik = !empty($departmentIds) || !empty($penampunganIds) || !empty($lambungIds);
+        // $shouldLoadPetugas = !empty($departmentIds) || !empty($penugasanIds);
+
+        $hasDepartment   = !empty($departmentIds);
+        $hasPenugasan    = !empty($penugasanIds);
+        $hasTitikFilter  = !empty($penampunganIds) || !empty($lambungIds);
+
+        $showOnlyPetugas = $hasPenugasan;
+        $showOnlyTitik   = !$hasPenugasan && $hasTitikFilter;
+        $showBoth        = $hasDepartment && !$hasPenugasan && !$hasTitikFilter;
+
+        $shouldLoadPetugas = $showBoth || $showOnlyPetugas;
+        $shouldLoadTitik   = $showBoth || $showOnlyTitik;
+
 
         $titikSampah = $shouldLoadTitik
-            ? TitikSampah::query()
-            ->with('jenisTitikSampah', 'jenisKendaraan')
+        ? TitikSampah::query()
+        ->with('jenisTitikSampah', 'jenisKendaraan')
             ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_jts', 'id_jk', 'armada', 'rute_kerja', 'vol_sampah', 'kecamatan', 'kelurahan')
             ->whereNotNull('latitude')->whereNotNull('longitude')
             ->where('latitude', '!=', '')->where('longitude', '!=', '')
-            ->when(!empty($departmentIds), fn($q) => $q->whereIn('id_department', $departmentIds))
+            ->when($hasDepartment, fn($q) => $q->whereIn('id_department', $departmentIds))
             ->when(!empty($penampunganIds), fn($q) => $q->whereIn('id_jts', $penampunganIds))
             ->when(!empty($lambungIds), fn($q) => $q->whereIn('armada', $lambungIds))
             ->get()
@@ -109,32 +121,30 @@ class FilterController extends Controller
                 'id_penugasan' => null,
                 'id_jts' => $t->id_jts,
                 'armada' => $t->armada,
-                'lambung' => $t->kendaraan->lambung,
-                'no_plat' => $t->kendaraan->no_plat,
+                'lambung' => $t->kendaraan?->lambung,
+                'no_plat' => $t->kendaraan?->no_plat,
                 'rute_kerja' => $t->rute_kerja,
                 'nama_jalan' => $t->nama_jalan,
                 'vol_sampah' => $t->vol_sampah,
                 'panjang_jalur' => null,
                 'kecamatan' => strtolower($t->kecamatan),
                 'kelurahan' => strtolower($t->kelurahan),
-                'jenis' => $t->jenisTitikSampah->nama,
-                'jenis_kendaraan' => $t?->jenisKendaraan->nama ?? null
+                'jenis' => $t->jenisTitikSampah?->nama,
+                'jenis_kendaraan' => $t->jenisKendaraan?->nama,
+                'lambung' => $t->kendaraan->lambung ?? "-"
             ])
             : collect();
 
+
         // Petugas hanya kalau penugasan dipilih
-        $petugas = empty($penugasanIds)
-            ? collect()
-            : Petugas::query()
-            ->with('kendaraan.jenisKendaraan')
-            ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_penugasan', 'rute_kerja', 'panjang_jalur', 'nama_kecamatan', 'nama_kelurahan')
+        $petugas = $shouldLoadPetugas
+        ? Petugas::query()
+        ->with('kendaraan.jenisKendaraan')
+        ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_penugasan', 'rute_kerja', 'panjang_jalur', 'nama_kecamatan', 'nama_kelurahan')
             ->whereNotNull('latitude')->whereNotNull('longitude')
-            ->where(
-                'latitude',
-                '!=',
-                ''
-            )->where('longitude', '!=', '')
-            ->whereIn('id_penugasan', $penugasanIds)
+            ->where('latitude', '!=', '')->where('longitude', '!=', '')
+            ->when($hasDepartment, fn($q) => $q->whereIn('id_department', $departmentIds))
+            ->when($hasPenugasan, fn($q) => $q->whereIn('id_penugasan', $penugasanIds))
             ->get()
             ->map(fn($p) => [
                 'id' => $p->id,
@@ -151,8 +161,10 @@ class FilterController extends Controller
                 'kecamatan' => strtolower($p->nama_kecamatan),
                 'kelurahan' => $p->nama_kelurahan ? strtolower($p->nama_kelurahan) : "-",
                 'jenis' => null,
-                'jenis_kendaraan' => $p->jenisKendaraan->nama ?? null
-            ]);
+                'jenis_kendaraan' => $p->jenisKendaraan?->nama,
+            ])
+            : collect();
+
 
         return response()->json([
             'data' => $titikSampah->concat($petugas)->values(),

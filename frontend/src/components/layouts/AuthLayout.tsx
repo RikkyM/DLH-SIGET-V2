@@ -5,8 +5,8 @@ const AuthLayout = () => {
   return (
     <section className="flex h-dvh w-full">
       <Outlet />
-      <div className="hidden flex-1 items-center justify-center bg-[#ECF6EE] lg:flex">
-        <div className="w-full max-w-xl space-y-4 lg:px-10">
+      <div className="hidden flex-1 items-center justify-center bg-[#27AEB9] lg:flex">
+        <div className="w-full max-w-xl space-y-4 lg:px-10 text-white">
           {/* <div className="flex size-44 items-center justify-center rounded-xl border-2 border-white bg-white/20 p-4 shadow-white mx-auto">
           </div>
            */}

@@ -1,12 +1,12 @@
 import type { AuthState, LoginCredentials } from "@/types/auth.types";
 import { createContext } from "react";
 
-type AuthContextType = AuthState & {
-  refresh: () => Promise<void>;
+export type AuthContextType = AuthState & {
   login: (cred: LoginCredentials) => Promise<void>;
-  logout: () => Promise<void>
+  logout: () => Promise<void>;
+  refresh: () => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
+  undefined,
 );

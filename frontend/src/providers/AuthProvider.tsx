@@ -1,7 +1,10 @@
 import { AuthContext } from "@/contexts/AuthContext";
-import { getCsrfCookie } from "@/services/csrf.service";
-import { http } from "@/services/http.services";
-import type { AuthState, LoginCredentials, User } from "@/types/auth.types";
+import {
+  login as loginService,
+  logout as logoutService,
+} from "@/services/auth.service";
+import { http } from "@/services/http";
+import type { LoginCredentials, User } from "@/types/auth.types";
 import {
   useCallback,
   useEffect,
@@ -11,32 +14,20 @@ import {
 } from "react";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    loading: true,
-    error: null,
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     try {
       const res = await http.get("/api/user");
-      setState((prev) => ({
-        ...prev,
-        user: res.data,
-        loading: false,
-        error: null,
-      }));
+      setUser(res.data);
+      setError(null);
     } catch {
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-        error: "Terjadi kesalahan pada server. Silakan coba lagi",
-      }));
+      setUser(null);
+      setError("Terjadi kesalahan pada server. Silakan coba lagi");
     } finally {
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-      }));
+      setLoading(false);
     }
   }, []);
 
@@ -46,31 +37,27 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = useCallback(
     async (cred: LoginCredentials) => {
-      await getCsrfCookie();
-      await http.post<User>("/api/login", cred);
+      await loginService(cred);
       await refresh();
     },
-    [refresh]
+    [refresh],
   );
 
   const logout = useCallback(async () => {
-    await http.post("/api/logout");
-    setState((prev) => ({
-      ...prev,
-      user: null,
-    }));
+    await logoutService();
+    setUser(null);
   }, []);
 
   const value = useMemo(
     () => ({
-      user: state.user,
-      loading: state.loading,
-      error: state.error,
+      user,
+      loading,
+      error,
       refresh,
       login,
       logout,
     }),
-    [state, refresh, login, logout]
+    [user, loading, error, refresh, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

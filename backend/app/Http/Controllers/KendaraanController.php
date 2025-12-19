@@ -18,7 +18,7 @@ class KendaraanController extends Controller
             ->when($q, fn($qq) => $qq->where('no_plat', 'like', "%{$q}%"))
             ->orderBy('no_plat')
             ->get()
-            ->map(fn($d) => ['value' => (string) $d->no_plat, 'label' => $d->no_plat, 'count' => $d->titikSampah->count()])
+            ->map(fn($d) => ['value' => (string) $d->no_plat, 'label' => $d->no_plat, 'count' => $d->titikSampah->count(), 'lambung' => $d->lambung ?? null])
             ->values();
 
         return response()->json([

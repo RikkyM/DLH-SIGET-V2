@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
-import { http } from "@/services/http.services";
+import { http } from "@/services/http";
 import type { LatLngExpression } from "leaflet";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import MultiSelectDropdown, {
@@ -48,39 +48,38 @@ const getDepartmentFilters = async () => {
   const res = await http.get<FiltersDepartmentsResponse>(
     "/api/filters/departments",
     {
-      withCredentials: false,
-      headers: { Accept: "application/json" },
+      headers: { "Content-Type": "application/json" },
     },
   );
   return res.data;
 };
 
-const getPenugasanFilters = async () => {
+const getPenugasanFilters = async (department: string[]) => {
   const res = await http.get<FiltersPenugasanResponse>(
     "/api/filters/penugasan",
     {
-      withCredentials: false,
-      headers: { Accept: "application/json" },
+      params: { department },
+      headers: { "Content-Type": "application/json" },
     },
   );
   return res.data;
 };
 
-const getPenampunganFilters = async () => {
+const getPenampunganFilters = async (department: string[]) => {
   const res = await http.get<FiltersPenampunganResponse>(
     "/api/filters/penampungan",
     {
-      withCredentials: false,
-      headers: { Accept: "application/json" },
+      params: { department },
+      headers: { "Content-Type": "application/json" },
     },
   );
   return res.data;
 };
 
-const getLambungFilters = async () => {
+const getLambungFilters = async (department: string[]) => {
   const res = await http.get<FiltersLambungResponse>("/api/filters/lambung", {
-    withCredentials: false,
-    headers: { Accept: "application/json" },
+    params: { department },
+    headers: { "Content-Type": "application/json" },
   });
   return res.data;
 };
@@ -98,7 +97,7 @@ const getMapMarkers = async (params: {
       penampungan: params.penampungan,
       lambung: params.lambung,
     },
-    headers: { Accept: "application/json" },
+    headers: { "Content-Type": "application/json" },
   });
   return res.data.data;
 };
@@ -135,15 +134,32 @@ const Homepage = () => {
 
       try {
         const department = await getDepartmentFilters();
-        const penugasan = await getPenugasanFilters();
-        const penampungan = await getPenampunganFilters();
-        const lambung = await getLambungFilters();
+        const penugasan = await getPenugasanFilters(departmentIds);
+        const penampungan = await getPenampunganFilters(departmentIds);
+        const lambung = await getLambungFilters(departmentIds);
         if (!alive) return;
 
         setOptDepartment(department.departments ?? []);
         setOptPenugasan(penugasan.penugasan ?? []);
         setOptPenampungan(penampungan.penampungan ?? []);
         setOptLambung(lambung.lambung ?? []);
+
+        const validPenugasan = new Set(
+          (penugasan.penugasan ?? []).map((o) => o.value),
+        );
+        setPenugasanIds((prev) => prev.filter((v) => validPenugasan.has(v)));
+
+        const validPenampungan = new Set(
+          (penampungan.penampungan ?? []).map((o) => o.value),
+        );
+        setPenampunganIds((prev) =>
+          prev.filter((v) => validPenampungan.has(v)),
+        );
+
+        const validLambung = new Set(
+          (lambung.lambung ?? []).map((o) => o.value),
+        );
+        setLambungIds((prev) => prev.filter((v) => validLambung.has(v)));
       } catch (e: unknown) {
         if (!alive) return;
         if (axios.isAxiosError(e)) {
@@ -159,7 +175,7 @@ const Homepage = () => {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [departmentIds]);
 
   // load markers whenever filter changes
   useEffect(() => {
@@ -195,6 +211,12 @@ const Homepage = () => {
       alive = false;
     };
   }, [departmentIds, penugasanIds, penampunganIds, lambungIds]);
+
+  useEffect(() => {
+    setPenugasanIds([]);
+    setPenampunganIds([]);
+    setLambungIds([]);
+  }, [departmentIds]);
 
   const leafletMarkers = useMemo(() => {
     return markers
@@ -243,6 +265,7 @@ const Homepage = () => {
           options={optLambung}
           value={lambungIds}
           onChange={setLambungIds}
+          showLambung={true}
         />
 
         {/* <div className="rounded-md border border-slate-200 bg-white p-3 text-xs text-slate-600">

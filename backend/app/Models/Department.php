@@ -14,4 +14,9 @@ class Department extends Model
     {
         return $this->hasMany(TitikSampah::class, 'id_department');
     }
+
+    public function petugas()
+    {
+        return $this->hasMany(Petugas::class, 'id_department');
+    }
 }

@@ -18,19 +18,33 @@ class AuthController extends Controller
         try {
             if (Auth::attempt($validated)) {
                 $request->session()->regenerate();
-
                 return response()->json([
-                    'message' => 'success',
-                ], 200);
-
-                return response()->json([
-                    'message' => 'Username atau password yang Anda masukkan salah.'
-                ], 401);
+                    'message' => 'Login successful',
+                    'user' => Auth::user()
+                ]);
             }
-        } catch (\Exception $e) {
+
             return response()->json([
-                'message' => "Terjadi kesalahan pada server."
+                'message' => 'Username atau password yang Anda masukkan salah.'
+            ], 401);
+        } catch (\Throwable $e) {
+            report($e);
+            return response()->json([
+                'message' => 'Terjadi gangguan pada server. Coba beberapa saat lagi.'
             ], 500);
         }
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Logged out successfully'
+        ], 200);
     }
 }

@@ -4,6 +4,7 @@ export type MultiSelectOption = {
   value: string;
   label: string;
   count: number;
+  lambung: number;
 };
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
   onChange: (next: string[]) => void;
   className?: string;
   showCount?: boolean;
+  showLambung?: boolean;
 };
 
 export default function MultiSelectDropdown({
@@ -25,6 +27,7 @@ export default function MultiSelectDropdown({
   onChange,
   className = "",
   showCount = true,
+  showLambung = false,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -183,6 +186,11 @@ export default function MultiSelectDropdown({
 
                     <span className="flex-1 text-slate-700">
                       {opt.label}
+                      {showLambung ? (
+                        <span className="ml-2 text-xs text-slate-500">
+                          (Lambung {opt.lambung ?? null})
+                        </span>
+                      ) : null}
                       {showCount ? (
                         <span className="ml-2 text-xs text-slate-500">
                           (Jumlah {opt.count})
