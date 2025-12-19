@@ -14,5 +14,5 @@ export const makePinIcon = (color: string) =>
     popupAnchor: [0, -30],
   });
 
-export const iconPetugas = makePinIcon("#F79B00");
+export const iconPetugas = makePinIcon("#008000");
 export const iconTitikSampah = makePinIcon("#ef4444");
