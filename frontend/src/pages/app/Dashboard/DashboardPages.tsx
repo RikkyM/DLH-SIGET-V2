@@ -68,11 +68,11 @@ const DashboardPages = () => {
           <p className="text-xl font-medium">{data?.total_petugas ?? "-"}</p>
         </div>
         <div className="flex flex-col">
-          <h4 className="text-xl font-semibold">Kendaraan Sampah</h4>
+          <h4 className="text-xl font-semibold">Kendaraan Kebersihan</h4>
           <p className="text-xl font-medium">{data?.total_kendaraan ?? "-"}</p>
         </div>
         <div className="flex flex-col">
-          <h4 className="text-xl font-semibold">Penampungan Sampah</h4>
+          <h4 className="text-xl font-semibold">Tempat Penampungan Sementara</h4>
           <p className="text-xl font-medium">{data?.total_tps ?? "-"}</p>
         </div>
         <div className="flex flex-col">
