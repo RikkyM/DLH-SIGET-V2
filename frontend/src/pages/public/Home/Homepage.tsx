@@ -7,6 +7,7 @@ import MultiSelectDropdown, {
   type MultiSelectOption,
 } from "@/components/ui/MultiSelectDropdown";
 import logo from "@/assets/img/dlh-logo.webp";
+import { iconPetugas, iconTitikSampah } from "./icon";
 
 type FiltersDepartmentsResponse = {
   departments: MultiSelectOption[];
@@ -291,22 +292,6 @@ const Homepage = () => {
         />
 
         {/* {leafletMarkers.map((m) => (
-          <Marker key={m.id} position={[m.lat, m.lng]}>
-            <Popup>
-              <div className="space-y-1">
-                <div className="font-semibold">{m.nama}</div>
-                <div className="text-xs">Dept: {m.id_department ?? "-"}</div>
-                <div className="text-xs">
-                  Penugasan: {m.id_penugasan ?? "-"}
-                </div>
-                <div className="text-xs">
-                  {m.lat}, {m.lng}
-                </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))} */}
-        {leafletMarkers.map((m) => (
           <Marker key={`${m.type}-${m.id}`} position={[m.lat, m.lng]}>
             <Popup>
               <div className="flex items-start gap-3">
@@ -324,8 +309,60 @@ const Homepage = () => {
                         {m?.jenis ?? "-"}
                       </div>
                       <div className="text-xs text-slate-600">
-                        {m?.no_plat ?? "-"},{" "}
-                        ({m?.lambung})
+                        {m?.no_plat ?? "-"}, ({m?.lambung})
+                      </div>
+                      <div className="text-xs text-slate-600">
+                        {m?.jenis_kendaraan ?? "-"}
+                      </div>
+                    </>
+                  )}
+                  <div className="capitalize">
+                    {m.nama_jalan}, {m?.kecamatan ?? "-"}, {m?.kelurahan ?? "-"}
+                  </div>
+                  {m.rute_kerja && (
+                    <div className="text-xs text-slate-600">
+                      {m?.rute_kerja ?? "-"}
+                    </div>
+                  )}
+                  {m.type === "petugas" && (
+                    <div className="text-xs text-slate-600">
+                      Panjang Rute:{" "}
+                      {m?.panjang_jalur ? `${m.panjang_jalur} M` : "-"}
+                    </div>
+                  )}
+                  {m.vol_sampah ? (
+                    <div className="text-xs text-slate-600">
+                      Volume Sampah: {m?.vol_sampah} KG
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        ))} */}
+        {leafletMarkers.map((m) => (
+          <Marker
+            key={`${m.type}-${m.id}`}
+            position={[m.lat, m.lng]}
+            icon={m.type === "petugas" ? iconPetugas : iconTitikSampah}
+          >
+            <Popup>
+              <div className="flex items-start gap-3">
+                <img
+                  src={logo}
+                  alt="logo"
+                  className="h-12 w-12 shrink-0 rounded object-contain"
+                />
+
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold">{m.nama}</div>
+                  {m.type === "titik_sampah" && (
+                    <>
+                      <div className="text-xs text-slate-600">
+                        {m?.jenis ?? "-"}
+                      </div>
+                      <div className="text-xs text-slate-600">
+                        {m?.no_plat ?? "-"}, ({m?.lambung})
                       </div>
                       <div className="text-xs text-slate-600">
                         {m?.jenis_kendaraan ?? "-"}

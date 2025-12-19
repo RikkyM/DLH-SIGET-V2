@@ -9,7 +9,7 @@ type MatrixTableProps = {
 
 const Table = ({ title, subtitle, headers, rows }: MatrixTableProps) => {
   return (
-    <div className="h-full rounded-lg border border-gray-300 bg-white p-3 shadow">
+    <div className="h-full rounded-lg border border-gray-300 bg-white p-3 shadow touch-pan-y touch-pan-x">
       <div className="space-y-1">
         <h2 className="font-semibold">{title}</h2>
         <p className="text-sm text-gray-400">{subtitle}</p>

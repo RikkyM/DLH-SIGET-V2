@@ -47,6 +47,32 @@ const Sidebar = () => {
           Titik Sampah
         </NavLink>
         <NavLink
+          to="/data-penugasan"
+          className={({ isActive }) =>
+            [
+              "block flex items-center gap-2 rounded p-2 font-medium whitespace-nowrap transition-all duration-300 outline-none",
+              isActive
+                ? "bg-[#27AEB9] text-white shadow"
+                : "text-black hover:bg-gray-500/20",
+            ].join(" ")
+          }
+        >
+          Penugasan
+        </NavLink>
+        <NavLink
+          to="/jenis-titik-sampah"
+          className={({ isActive }) =>
+            [
+              "block flex items-center gap-2 rounded p-2 font-medium whitespace-nowrap transition-all duration-300 outline-none",
+              isActive
+                ? "bg-[#27AEB9] text-white shadow"
+                : "text-black hover:bg-gray-500/20",
+            ].join(" ")
+          }
+        >
+          Jenis Titik Sampah
+        </NavLink>
+        {/* <NavLink
           to="/data-kendaraan"
           className={({ isActive }) =>
             [
@@ -58,7 +84,7 @@ const Sidebar = () => {
           }
         >
           Data Kendaraan
-        </NavLink>
+        </NavLink> */}
       </nav>
     </aside>
   );

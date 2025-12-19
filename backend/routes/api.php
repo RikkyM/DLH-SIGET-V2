@@ -7,6 +7,7 @@ use App\Http\Controllers\FilterController;
 use App\Http\Controllers\JTSController;
 use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\PenugasanController;
+use App\Http\Controllers\Petugas\PetugasController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -42,5 +43,7 @@ Route::middleware('web')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
 
         Route::get('/dashboard', [DashboardController::class, 'index']);
+        Route::get('/petugas', [PetugasController::class, 'index']);
+        Route::put('/petugas/{id}', [PetugasController::class, 'update']);
     });
 });

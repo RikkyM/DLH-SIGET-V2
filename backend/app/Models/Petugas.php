@@ -27,7 +27,8 @@ class Petugas extends Model
         'no_lambung',
         'jenis_angkutan',
         'foto_petugas',
-        'keterangan'
+        'keterangan',
+        'status'
     ];
 
     public function department()
