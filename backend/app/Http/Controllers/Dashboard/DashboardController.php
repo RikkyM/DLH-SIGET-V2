@@ -92,7 +92,7 @@ class DashboardController extends Controller
 
         $total_kendaraan = DataKendaraan::count();
         $total_tps       = TitikSampah::count();
-        $total_uptd      = Department::count();
+        $total_uptd      = Department::whereNotIn('nama', ['Our Company', 'SEKRETARIAT', 'NON AKTIF', 'UPTD LABORATORIUM'])->count();
 
         // Header penugasan
         $penugasanList = Penugasan::select('id', 'nama')->orderBy('nama')->get();

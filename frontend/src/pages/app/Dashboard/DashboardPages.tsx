@@ -64,19 +64,19 @@ const DashboardPages = () => {
     <section className="flex flex-col gap-3 p-3">
       <div className="grid grid-cols-4 gap-3 *:min-h-28 *:justify-between *:rounded-lg *:border *:border-gray-300 *:bg-white *:p-3 *:shadow">
         <div className="flex flex-col">
-          <h4 className="text-xl font-semibold">Total Petugas</h4>
+          <h4 className="text-xl font-semibold">Petugas Kebersihan</h4>
           <p className="text-xl font-medium">{data?.total_petugas ?? "-"}</p>
         </div>
         <div className="flex flex-col">
-          <h4 className="text-xl font-semibold">Total Kendaraan</h4>
+          <h4 className="text-xl font-semibold">Kendaraan Sampah</h4>
           <p className="text-xl font-medium">{data?.total_kendaraan ?? "-"}</p>
         </div>
         <div className="flex flex-col">
-          <h4 className="text-xl font-semibold">Total Titik Sampah</h4>
+          <h4 className="text-xl font-semibold">Penampungan Sampah</h4>
           <p className="text-xl font-medium">{data?.total_tps ?? "-"}</p>
         </div>
         <div className="flex flex-col">
-          <h4 className="text-xl font-semibold">Total UPTD</h4>
+          <h4 className="text-xl font-semibold">UPTD Lingkungan Hidup</h4>
           <p className="text-xl font-medium">{data?.total_uptd ?? "-"}</p>
         </div>
       </div>
