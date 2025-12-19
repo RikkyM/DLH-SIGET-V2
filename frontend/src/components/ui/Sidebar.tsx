@@ -20,6 +20,45 @@ const Sidebar = () => {
         >
           Dashboard
         </NavLink>
+        <NavLink
+          to="/petugas"
+          className={({ isActive }) =>
+            [
+              "block flex items-center gap-2 rounded p-2 font-medium whitespace-nowrap transition-all duration-300 outline-none",
+              isActive
+                ? "bg-[#27AEB9] text-white shadow"
+                : "text-black hover:bg-gray-500/20",
+            ].join(" ")
+          }
+        >
+          Petugas
+        </NavLink>
+        <NavLink
+          to="/titik-sampah"
+          className={({ isActive }) =>
+            [
+              "block flex items-center gap-2 rounded p-2 font-medium whitespace-nowrap transition-all duration-300 outline-none",
+              isActive
+                ? "bg-[#27AEB9] text-white shadow"
+                : "text-black hover:bg-gray-500/20",
+            ].join(" ")
+          }
+        >
+          Titik Sampah
+        </NavLink>
+        <NavLink
+          to="/data-kendaraan"
+          className={({ isActive }) =>
+            [
+              "block flex items-center gap-2 rounded p-2 font-medium whitespace-nowrap transition-all duration-300 outline-none",
+              isActive
+                ? "bg-[#27AEB9] text-white shadow"
+                : "text-black hover:bg-gray-500/20",
+            ].join(" ")
+          }
+        >
+          Data Kendaraan
+        </NavLink>
       </nav>
     </aside>
   );
