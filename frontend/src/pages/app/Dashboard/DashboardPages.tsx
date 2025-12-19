@@ -2,22 +2,56 @@ import { useEffect, useState } from "react";
 import { http } from "@/services/http";
 import Table from "./components/Table";
 
+type DashboardRow = {
+  uptd_id: number;
+  uptd_nama: string;
+
+  petugas_total: number;
+  petugas_counts: Record<string, number>;
+
+  tps_total: number;
+  tps_counts: Record<string, number>;
+
+  kendaraan_total: number;
+  kendaraan_counts: Record<string, number>;
+};
+
 type DashboardRes = {
   total_petugas: number;
   total_kendaraan: number;
   total_tps: number;
   total_uptd: number;
+
   penugasan_headers: string[];
-  rows: Array<{
-    uptd_id: number;
-    uptd_nama: string;
-    total: number;
-    counts: Record<string, number>;
-  }>;
+  jenis_tps_headers: string[];
+  jenis_kendaraan_headers: string[];
+
+  rows: DashboardRow[];
 };
 
 const DashboardPages = () => {
   const [data, setData] = useState<DashboardRes | null>(null);
+
+  const penugasanRows = (data?.rows ?? []).map((r) => ({
+    uptd_id: r.uptd_id,
+    uptd_nama: r.uptd_nama,
+    total: r.petugas_total,
+    counts: r.petugas_counts,
+  }));
+
+  const jenisTpsRows = (data?.rows ?? []).map((r) => ({
+    uptd_id: r.uptd_id,
+    uptd_nama: r.uptd_nama,
+    total: r.tps_total,
+    counts: r.tps_counts,
+  }));
+
+  const jenisKendaraanRows = (data?.rows ?? []).map((r) => ({
+    uptd_id: r.uptd_id,
+    uptd_nama: r.uptd_nama,
+    total: r.kendaraan_total,
+    counts: r.kendaraan_counts,
+  }));
 
   useEffect(() => {
     (async () => {
@@ -104,11 +138,32 @@ const DashboardPages = () => {
           </table>
         </div>
       </div> */}
-      <Table
+      {/* <Table
         title="Jumlah Penugasan"
         subtitle="Data penugasan petugas berdasarkan UPTD"
         headers={data?.penugasan_headers ?? []}
         rows={data?.rows ?? []}
+      /> */}
+
+      <Table
+        title="Jumlah Penugasan"
+        subtitle="Data penugasan petugas berdasarkan UPTD"
+        headers={data?.penugasan_headers ?? []}
+        rows={penugasanRows}
+      />
+
+      <Table
+        title="Jumlah Jenis Titik Sampah"
+        subtitle="Data titik sampah berdasarkan jenis per UPTD"
+        headers={data?.jenis_tps_headers ?? []}
+        rows={jenisTpsRows}
+      />
+
+      <Table
+        title="Jumlah Jenis Kendaraan"
+        subtitle="Data kendaraan berdasarkan jenis per UPTD"
+        headers={data?.jenis_kendaraan_headers ?? []}
+        rows={jenisKendaraanRows}
       />
     </section>
   );

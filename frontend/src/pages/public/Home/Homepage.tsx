@@ -321,24 +321,23 @@ const Homepage = () => {
                   {m.type === "titik_sampah" && (
                     <>
                       <div className="text-xs text-slate-600">
-                        Jenis: {m?.jenis ?? "-"}
+                        {m?.jenis ?? "-"}
                       </div>
                       <div className="text-xs text-slate-600">
-                        No TNKB dan No Lambung: {m?.no_plat ?? "-"},{" "}
-                        {m?.lambung}
+                        {m?.no_plat ?? "-"},{" "}
+                        ({m?.lambung})
                       </div>
                       <div className="text-xs text-slate-600">
-                        Jenis Kendaraan: {m?.jenis_kendaraan ?? "-"}
+                        {m?.jenis_kendaraan ?? "-"}
                       </div>
                     </>
                   )}
                   <div className="capitalize">
-                    Lokasi: {m.nama_jalan}, {m?.kecamatan ?? "-"},{" "}
-                    {m?.kelurahan ?? "-"}
+                    {m.nama_jalan}, {m?.kecamatan ?? "-"}, {m?.kelurahan ?? "-"}
                   </div>
                   {m.rute_kerja && (
                     <div className="text-xs text-slate-600">
-                      Rute Kerja: {m?.rute_kerja ?? "-"}
+                      {m?.rute_kerja ?? "-"}
                     </div>
                   )}
                   {m.type === "petugas" && (
@@ -347,11 +346,11 @@ const Homepage = () => {
                       {m?.panjang_jalur ? `${m.panjang_jalur} M` : "-"}
                     </div>
                   )}
-                  {m.vol_sampah && (
+                  {m.vol_sampah ? (
                     <div className="text-xs text-slate-600">
-                      Volume Sampah: {m?.vol_sampah ?? "-"}
+                      Volume Sampah: {m?.vol_sampah} KG
                     </div>
-                  )}
+                  ) : null}
                 </div>
               </div>
             </Popup>

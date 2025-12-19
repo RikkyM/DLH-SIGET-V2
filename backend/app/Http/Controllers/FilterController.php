@@ -104,7 +104,7 @@ class FilterController extends Controller
         $titikSampah = $shouldLoadTitik
         ? TitikSampah::query()
         ->with('jenisTitikSampah', 'jenisKendaraan')
-            ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_jts', 'id_jk', 'armada', 'rute_kerja', 'vol_sampah', 'kecamatan', 'kelurahan')
+            ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_jts', 'id_jk', 'armada', 'rute_kerja', 'vol_sampah', 'kecamatan', 'kelurahan', 'no_lambung')
             ->whereNotNull('latitude')->whereNotNull('longitude')
             ->where('latitude', '!=', '')->where('longitude', '!=', '')
             ->when($hasDepartment, fn($q) => $q->whereIn('id_department', $departmentIds))
@@ -131,7 +131,7 @@ class FilterController extends Controller
                 'kelurahan' => strtolower($t->kelurahan),
                 'jenis' => $t->jenisTitikSampah?->nama,
                 'jenis_kendaraan' => $t->jenisKendaraan?->nama,
-                'lambung' => $t->kendaraan->lambung ?? "-"
+                'lambung' => $t->no_lambung ?? "-"
             ])
             : collect();
 
