@@ -19,20 +19,20 @@ const Table = ({ title, subtitle, headers, rows }: MatrixTableProps) => {
         <table className="w-full border-collapse">
           <thead className="whitespace-nowrap">
             <tr className="border-b border-gray-400">
-              <th className="sticky top-0 z-30 w-16 bg-white p-2 text-left">
+              <th className="sticky top-0 z-10 w-16 bg-white p-2 text-left">
                 No.
               </th>
-              <th className="sticky top-0 left-0 z-40 bg-white p-2 text-left">
+              <th className="sticky top-0 left-0 z-10 bg-white p-2 text-left">
                 <div className="min-w-40">Nama UPTD</div>
               </th>
-              <th className="sticky top-0 z-30 bg-white p-2 text-center">
+              <th className="sticky top-0 z-10 bg-white p-2 text-center">
                 Total
               </th>
 
               {headers.map((h) => (
                 <th
                   key={h}
-                  className="sticky top-0 z-30 bg-white p-2 text-center"
+                  className="sticky top-0 z-10 bg-white p-2 text-center"
                 >
                   {h}
                 </th>
@@ -45,7 +45,7 @@ const Table = ({ title, subtitle, headers, rows }: MatrixTableProps) => {
               <tr key={row.uptd_id} className="border-b">
                 <td className="p-2">{idx + 1}</td>
 
-                <td className="sticky left-0 z-20 bg-white p-2 whitespace-nowrap">
+                <td className="sticky left-0 z-0 bg-white p-2 whitespace-nowrap">
                   {row.uptd_nama}
                 </td>
 
