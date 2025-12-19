@@ -82,22 +82,22 @@ const DashboardPages = () => {
       </div>
 
       <Table
-        title="Jumlah Penugasan"
-        subtitle="Data penugasan petugas berdasarkan UPTD"
+        title="Jumlah Petugas Kebersihan"
+        subtitle="Data petugas kebersihan berdasarkan wilayah UPTD"
         headers={data?.penugasan_headers ?? []}
         rows={penugasanRows}
       />
 
       <Table
-        title="Jumlah Jenis Titik Sampah"
-        subtitle="Data titik sampah berdasarkan jenis per UPTD"
+        title="Jumlah Tempat Penampungan Sementara (TPS)"
+        subtitle="Data tempat penampungan sementara berdasarkan wilayah UPTD"
         headers={data?.jenis_tps_headers ?? []}
         rows={jenisTpsRows}
       />
 
       <Table
-        title="Jumlah Jenis Kendaraan"
-        subtitle="Data kendaraan berdasarkan jenis per UPTD"
+        title="Jumlah Data Kendaraan Angkutan Kebersihan"
+        subtitle="Data kendaraan angkutan kebersihan berdasarkan wilayah UPTD"
         headers={data?.jenis_kendaraan_headers ?? []}
         rows={jenisKendaraanRows}
       />
