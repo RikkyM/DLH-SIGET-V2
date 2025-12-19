@@ -35,4 +35,9 @@ class DataKendaraan extends Model
     {
         return $this->hasMany(TitikSampah::class, 'armada', 'no_plat');
     }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'id_department');
+    }
 }

@@ -131,15 +131,14 @@ class DashboardController extends Controller
             ->groupBy('id_department')
             ->map(fn($items) => $items->pluck('total', 'id_jts')); // [jenis_id => total]
 
-        $matrixKendaraan = TitikSampah::query()
-            ->select('id_department', 'id_jk', DB::raw('COUNT(*) as total')) // <-- pastikan FK jenis = id_jts
+        $matrixKendaraan = DataKendaraan::query()
+            ->select('id_department', 'id_jenis', DB::raw('COUNT(*) as total')) // <-- pastikan FK jenis = id_jts
             ->whereHas('department', fn($q) => $q->whereNotIn('nama', $excludedDept)) // kalau TitikSampah punya relasi department
             ->whereNotNull('id_department')
-            ->whereNotNull('id_jts')
-            ->groupBy('id_department', 'id_jk')
+            ->groupBy('id_department', 'id_jenis')
             ->get()
             ->groupBy('id_department')
-            ->map(fn($items) => $items->pluck('total', 'id_jk')); // [jenis_id => total]
+            ->map(fn($items) => $items->pluck('total', 'id_jenis')); // [jenis_id => total]
 
         // Susun rows per UPTD (gabung 2 counts)
         $rows = $uptdList->map(function ($uptd) use ($penugasanList, $jenisTpsList, $jenisKendaraanList, $matrixPetugas, $matrixTps, $matrixKendaraan) {

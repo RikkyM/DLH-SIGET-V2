@@ -19,4 +19,9 @@ class Department extends Model
     {
         return $this->hasMany(Petugas::class, 'id_department');
     }
+
+    public function kendaraan()
+    {
+        return $this->hasMany(DataKendaraan::class, 'id_department');
+    }
 }
