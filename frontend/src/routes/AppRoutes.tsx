@@ -6,6 +6,7 @@ import PublicLayout from "@/components/layouts/PublicLayout";
 import Homepage from "@/pages/public/Home/Homepage";
 import GuestRoute from "./guards/GuestRoute";
 import DashboardPages from "@/pages/app/Dashboard/DashboardPages";
+import PetugasPages from "@/pages/app/Petugas/PetugasPages";
 
 export const AppRoutes = () => {
   return (
@@ -22,6 +23,7 @@ export const AppRoutes = () => {
 
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPages />} />
+        <Route path="/petugas" element={<PetugasPages />} />
       </Route>
     </Routes>
   );

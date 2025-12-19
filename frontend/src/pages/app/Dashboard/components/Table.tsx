@@ -22,7 +22,7 @@ const Table = ({ title, subtitle, headers, rows }: MatrixTableProps) => {
               <th className="sticky top-0 z-10 w-16 bg-white p-2 text-left">
                 No.
               </th>
-              <th className="sticky top-0 left-0 z-10 bg-white p-2 text-left">
+              <th className="sticky top-0 left-0 z-20 bg-white p-2 text-left">
                 <div className="min-w-40">Nama UPTD</div>
               </th>
               <th className="sticky top-0 z-10 bg-white p-2 text-center">
