@@ -1,22 +1,22 @@
-import Dialog from "@/components/ui/Dialog";
-import Pagination from "@/components/ui/Pagination";
-import { useDebounce } from "@/hooks/useDebounce";
+import { ChevronDown, Pencil, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import EditButton from "./components/EditButton";
-import FormEdit from "./components/FormEdit";
-import { usePetugas } from "./hooks/usePetugas";
-import { ChevronDown, RefreshCw } from "lucide-react";
+import { usePenampungan } from "./hooks/usePenampungan";
+import { useDebounce } from "@/hooks/useDebounce";
 import { useDepartments } from "@/hooks/useDepartments";
-import { usePenugasan } from "@/hooks/usePenugasan";
+import { useJts } from "@/hooks/useJts";
+import { useJenisKendaraan } from "@/hooks/useJenisKendaraan";
+import Pagination from "@/components/ui/Pagination";
 
-const PetugasPages = () => {
+const PenampunganPages = () => {
   const [search, setSearch] = useState("");
   const [unitKerja, setUnitKerja] = useState<number | undefined>();
-  const [penugasan, setPenugasan] = useState<number | undefined>();
+  const [jts, setJts] = useState<number | undefined>();
+  const [jenisKendaraan, setJenisKendaraan] = useState<number | undefined>();
   const debouncedSearch = useDebounce(search, 500);
 
   const { departments } = useDepartments();
-  const { penugasan: dataPenugasan } = usePenugasan();
+  const { jts: dataJts } = useJts();
+  const { jenisKendaraan: dataJk } = useJenisKendaraan();
 
   const {
     data,
@@ -28,11 +28,11 @@ const PetugasPages = () => {
     perPage,
     setPerPage,
     resetToFirstPage,
-  } = usePetugas(debouncedSearch, unitKerja, penugasan);
+  } = usePenampungan(debouncedSearch, unitKerja, jts, jenisKendaraan);
 
   useEffect(() => {
     resetToFirstPage();
-  }, [debouncedSearch, unitKerja, penugasan, resetToFirstPage]);
+  }, [debouncedSearch, resetToFirstPage]);
 
   const tableRows = useMemo(() => {
     const startIndex = (meta?.from ?? 1) - 1;
@@ -45,64 +45,33 @@ const PetugasPages = () => {
         <td className="w-12 text-center">
           <div className="w-12">{startIndex + index + 1}</div>
         </td>
-        <td className="text-center">{d.nik}</td>
+        <td>{d?.jenis_titik_sampah?.nama ?? "-"}</td>
         <td>{d.nama}</td>
-        <td>{d?.department?.nama ?? "-"}</td>
+        <td>{d.nama_jalan}</td>
         <td className="capitalize">
-          {d?.penugasan?.nama.toLowerCase() ?? "-"}
-        </td>
-        <td className="capitalize">
-          {d.tempat_lahir ? d.tempat_lahir.toLowerCase() : "-"}
-        </td>
-        <td className="text-center capitalize">
-          {d.tanggal_lahir
-            ? new Date(d.tanggal_lahir).toLocaleDateString("id-ID", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })
-            : "-"}
-        </td>
-        <td className="text-center whitespace-nowrap capitalize">
-          {d.tanggal_lahir ? `${d.usia} Tahun` : "-"}
-        </td>
-        <td className="text-center capitalize">{d?.jenis_kelamin ?? "-"}</td>
-        <td className="w-72 text-left capitalize">
-          <div className="w-72 max-w-72">{d?.alamat ?? "-"}</div>
-        </td>
-        <td className="text-center">{d?.rt ?? "-"}</td>
-        <td className="text-center">{d?.rw ?? "-"}</td>
-        <td className="capitalize">
-          {d?.nama_kelurahan ? d.nama_kelurahan.toLowerCase() : "-"}
+          {d?.kelurahan ? d?.kelurahan.toLowerCase() : "-"}
         </td>
         <td className="capitalize">
-          {d?.nama_kecamatan ? d.nama_kecamatan.toLowerCase() : "-"}
+          {d?.kecamatan ? d?.kecamatan.toLowerCase() : "-"}
         </td>
-        <td className="capitalize">{d.agama ? d.agama.toLowerCase() : "-"}</td>
-        <td className="capitalize">
-          {d.status_perkawinan ? d.status_perkawinan.toLowerCase() : "-"}
+        <td className="text-left">{d?.jenis_kendaraan?.nama ?? "-"}</td>
+        <td className="text-center">
+          {d?.vol_sampah ? `${d?.vol_sampah} KG` : "-"}
         </td>
-        <td className="capitalize">-</td>
-        <td className="capitalize">-</td>
-        <td className="text-center capitalize">
-          {d?.panjang_jalur ? `${d.panjang_jalur} M` : "-"}
+        <td className="text-center capitalize">{d?.status_kontainer ?? "-"}</td>
+        <td className="text-left">
+          <div className="w-64">{d?.rute_kerja ?? "-"}</div>
         </td>
-        <td className="w-72 capitalize">
-          <div className="w-72">{d?.rute_kerja ?? "-"}</div>
-        </td>
-        <td className="text-center capitalize">
-          <span
-            className={`font-medium ${
-              d?.department?.nama != "NON AKTIF"
-                ? "text-green-400"
-                : "text-red-400"
-            }`}
+        <td className="text-left">{d?.keterangan ?? "-"}</td>
+        <td className="text-left">{d?.kendaraan?.nama_sopir ?? "-"}</td>
+        <td className="text-left">-</td>
+        <td className="text-center">
+          <button
+            type="button"
+            className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200"
           >
-            {d?.department?.nama != "NON AKTIF" ? "Aktif" : "Tidak Aktif"}
-          </span>
-        </td>
-        <td className="sticky right-0 z-0 bg-white text-center">
-          <EditButton data={d} />
+            <Pencil className="max-w-5" />
+          </button>
         </td>
       </tr>
     ));
@@ -112,7 +81,9 @@ const PetugasPages = () => {
     <section className="flex flex-1 flex-col gap-3 overflow-auto p-3">
       <div className="flex h-full flex-col gap-2 overflow-auto rounded-lg bg-white p-3 shadow">
         <div className="space-y-2">
-          <h4 className="text-xl font-semibold">Petugas</h4>
+          <h4 className="text-xl font-semibold">
+            Titik Sampah Sementara (TPS)
+          </h4>
 
           <div className="flex flex-wrap items-center gap-2">
             <label htmlFor="search" className="inline-block">
@@ -176,20 +147,42 @@ const PetugasPages = () => {
                 <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
               </label>
               <label
-                htmlFor="penugasan"
+                htmlFor="id_jts"
                 className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
               >
                 <select
-                  id="penugasan"
-                  name="penugasan"
+                  id="id_jts"
+                  name="id_jts"
                   className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
-                  value={penugasan}
+                  value={jts}
                   onChange={(e) => {
-                    setPenugasan(Number(e.target.value));
+                    setJts(Number(e.target.value));
                   }}
                 >
-                  <option value="">Pilih Penugasan</option>
-                  {dataPenugasan.map((dept, index) => (
+                  <option value="">Pilih Jenis Titik Sampah</option>
+                  {dataJts.map((dept, index) => (
+                    <option key={dept.id ?? index} value={dept.id}>
+                      {dept.nama}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
+              </label>
+              <label
+                htmlFor="id_jk"
+                className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
+              >
+                <select
+                  id="id_jk"
+                  name="id_jk"
+                  className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
+                  value={jenisKendaraan}
+                  onChange={(e) => {
+                    setJenisKendaraan(Number(e.target.value));
+                  }}
+                >
+                  <option value="">Pilih Jenis Kendaraan</option>
+                  {dataJk.map((dept, index) => (
                     <option key={dept.id ?? index} value={dept.id}>
                       {dept.nama}
                     </option>
@@ -232,26 +225,18 @@ const PetugasPages = () => {
                     <th className="w-12">
                       <div className="w-12">#</div>
                     </th>
-                    <th>NIK</th>
-                    <th className="text-left">Nama</th>
-                    <th className="text-left">Unit Kerja</th>
-                    <th className="text-left">Penugasan</th>
-                    <th className="text-left">Tempat Lahir</th>
-                    <th className="text-center">Tanggal Lahir</th>
-                    <th className="text-center">Usia</th>
-                    <th className="text-center">Jenis Kelamin</th>
-                    <th className="text-left">Alamat</th>
-                    <th className="text-center">RT</th>
-                    <th className="text-center">RW</th>
+                    <th className="text-left">Jenis Titik Sampah</th>
+                    <th className="text-left">Nama Titik Sampah</th>
+                    <th className="text-left">Nama Jalan</th>
                     <th className="text-left">Kelurahan</th>
                     <th className="text-left">Kecamatan</th>
-                    <th className="text-left">Agama</th>
-                    <th className="text-left">Status Perkawinan</th>
-                    <th className="text-left">Pas Foto</th>
-                    <th className="text-left">Foto Lapangan</th>
-                    <th className="text-center">Panjang Jalur</th>
-                    <th className="text-left">Rute / Jalur</th>
-                    <th>Status</th>
+                    <th className="text-left">Jenis Kendaraan</th>
+                    <th className="text-center">Vol. Sampah</th>
+                    <th className="text-center">Status Kontainer</th>
+                    <th className="text-left">Rute Kerja</th>
+                    <th className="text-left">Keterangan</th>
+                    <th className="text-left">Nama Sopir</th>
+                    <th className="text-left">Foto Lokasi</th>
                     <th className="sticky top-0 right-0 z-10">Action</th>
                   </tr>
                 </thead>
@@ -262,14 +247,8 @@ const PetugasPages = () => {
         </div>
         <Pagination meta={meta} onPageChange={setPage} />
       </div>
-
-      <Dialog>
-        <FormEdit
-        //  refetch={fetch}
-        />
-      </Dialog>
     </section>
   );
 };
 
-export default PetugasPages;
+export default PenampunganPages;

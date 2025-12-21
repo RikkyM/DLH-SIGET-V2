@@ -208,16 +208,18 @@ class DashboardController extends Controller
 
         // UPTD list
         $uptdList = Department::select('id', 'nama')
-        ->whereNotIn('nama', $excludedDept)
-        ->orderBy('nama')
-        ->get();
+            ->whereNotIn('nama', $excludedDept)
+            ->orderBy('nama')
+            ->get();
 
         // MATRIX: petugas per (department, penugasan)
         $matrixPetugas = Petugas::query()
-        ->select('id_department', 'id_penugasan',
-            DB::raw('COUNT(*) as total')
-        )
-        ->whereHas('department', fn($q) => $q->whereNotIn('nama', $excludedDept))
+            ->select(
+                'id_department',
+                'id_penugasan',
+                DB::raw('COUNT(*) as total')
+            )
+            ->whereHas('department', fn($q) => $q->whereNotIn('nama', $excludedDept))
             ->where(fn($q) => $q->whereNotNull('nama')->where('nama', '!=', '')->where('nama', 'not like', '%admin%'))
             ->whereNotNull('id_department')
             ->whereNotNull('id_penugasan')
@@ -227,15 +229,39 @@ class DashboardController extends Controller
             ->map(fn($items) => $items->pluck('total', 'id_penugasan'));
 
         // MATRIX: titik sampah per (department, jenis_tps)
+        // $matrixTps = TitikSampah::query()
+        //     ->select('id_department', 'id_jts', DB::raw('COUNT(*) as total'))
+        //     ->whereHas('department', fn($q) => $q->whereNotIn('nama', $excludedDept))
+        //     ->whereNotNull('id_department')
+        //     ->whereNotNull('id_jts')
+        //     ->groupBy('id_department', 'id_jts')
+        //     ->get()
+        //     ->groupBy('id_department')
+        //     ->map(fn($items) => $items->pluck('total', 'id_jts'));
         $matrixTps = TitikSampah::query()
-            ->select('id_department', 'id_jts', DB::raw('COUNT(*) as total'))
+            ->select(
+                'id_department',
+                'id_jts',
+                DB::raw('COUNT(*) as jumlah'),
+                DB::raw('COALESCE(SUM(vol_sampah), 0) as volume') // <-- ganti kalau nama kolomnya beda
+            )
             ->whereHas('department', fn($q) => $q->whereNotIn('nama', $excludedDept))
             ->whereNotNull('id_department')
             ->whereNotNull('id_jts')
             ->groupBy('id_department', 'id_jts')
             ->get()
             ->groupBy('id_department')
-            ->map(fn($items) => $items->pluck('total', 'id_jts'));
+            ->map(function ($items) {
+                // hasil: [id_jts => ['jumlah'=>x,'volume'=>y], ...]
+                return $items->mapWithKeys(function ($r) {
+                    return [
+                        $r->id_jts => [
+                            'jumlah' => (int) $r->jumlah,
+                            'volume' => (float) $r->volume,
+                        ]
+                    ];
+                });
+            });
 
         $matrixKendaraan = DataKendaraan::query()
             ->select('id_department', 'id_jenis', DB::raw('COUNT(*) as total'))
@@ -250,56 +276,77 @@ class DashboardController extends Controller
 
         // 1. Penugasan - hitung total dan urutkan
         $penugasanTotals = Penugasan::query()
-        ->select('penugasan.id', 'penugasan.nama', DB::raw('COUNT(petugas.id) as total'))
-        ->leftJoin('petugas', 'penugasan.id', '=', 'petugas.id_penugasan')
-        ->leftJoin('departments', 'petugas.id_department', '=', 'departments.id')
-        ->where(function ($q) use ($excludedDept) {
-            $q->whereNotIn('departments.nama', $excludedDept)
-            ->orWhereNull('departments.id');
-        })
-        ->where(function ($q) {
-            $q->whereNotNull('petugas.nama')
-            ->where('petugas.nama', '!=', '')
-            ->where('petugas.nama', 'not like', '%admin%')
-            ->orWhereNull('petugas.id');
-        })
-        ->groupBy('penugasan.id', 'penugasan.nama')
-        ->orderByDesc('total')
-        ->orderBy('penugasan.nama')
-        ->get();
+            ->select('penugasan.id', 'penugasan.nama', DB::raw('COUNT(petugas.id) as total'))
+            ->leftJoin('petugas', 'penugasan.id', '=', 'petugas.id_penugasan')
+            ->leftJoin('departments', 'petugas.id_department', '=', 'departments.id')
+            ->where(function ($q) use ($excludedDept) {
+                $q->whereNotIn('departments.nama', $excludedDept)
+                    ->orWhereNull('departments.id');
+            })
+            ->where(function ($q) {
+                $q->whereNotNull('petugas.nama')
+                    ->where('petugas.nama', '!=', '')
+                    ->where('petugas.nama', 'not like', '%admin%')
+                    ->orWhereNull('petugas.id');
+            })
+            ->groupBy('penugasan.id', 'penugasan.nama')
+            ->orderByDesc('total')
+            ->orderBy('penugasan.nama')
+            ->get();
 
         // 2. Jenis TPS - hitung total dan urutkan
+        // $jenisTpsTotals = JenisTitikSampah::query()
+        //     ->select(
+        //         'jenis_titik_sampah.id',
+        //         'jenis_titik_sampah.nama',
+        //         DB::raw('COUNT(titik_sampah.id) as total')
+        //     )
+        //     ->leftJoin('titik_sampah', 'jenis_titik_sampah.id', '=', 'titik_sampah.id_jts')
+        //     ->leftJoin('departments', 'titik_sampah.id_department', '=', 'departments.id')
+        //     ->where(function ($q) use ($excludedDept) {
+        //         $q->whereNotIn('departments.nama', $excludedDept)
+        //             ->orWhereNull('departments.id');
+        //     })
+        //     ->groupBy('jenis_titik_sampah.id', 'jenis_titik_sampah.nama')
+        //     ->orderByDesc('total')
+        //     ->orderBy('jenis_titik_sampah.nama')
+        //     ->get();
+        $excludeTps = 'Sampah Liar';
         $jenisTpsTotals = JenisTitikSampah::query()
-        ->select('jenis_titik_sampah.id', 'jenis_titik_sampah.nama',
-            DB::raw('COUNT(titik_sampah.id) as total')
-        )
-        ->leftJoin('titik_sampah', 'jenis_titik_sampah.id', '=', 'titik_sampah.id_jts')
+            ->select(
+                'jenis_titik_sampah.id',
+                'jenis_titik_sampah.nama',
+                DB::raw('COUNT(titik_sampah.id) as total')
+            )
+            ->leftJoin('titik_sampah', 'jenis_titik_sampah.id', '=', 'titik_sampah.id_jts')
             ->leftJoin('departments', 'titik_sampah.id_department', '=', 'departments.id')
             ->where(function ($q) use ($excludedDept) {
                 $q->whereNotIn('departments.nama', $excludedDept)
-                ->orWhereNull('departments.id');
+                    ->orWhereNull('departments.id');
             })
             ->groupBy('jenis_titik_sampah.id', 'jenis_titik_sampah.nama')
-            ->orderByDesc('total')
+            // ->orderByDesc('total')
+            ->orderByRaw("CASE WHEN jenis_titik_sampah.nama = ? THEN 1 ELSE 0 END ASC", [$excludeTps])
             ->orderBy('jenis_titik_sampah.nama')
             ->get();
 
         // 3. Jenis Kendaraan - hitung total dan urutkan
         $jenisKendaraanTotals = JenisKendaraan::query()
-        ->select('jenis_kendaraan.id',
-            'jenis_kendaraan.nama',
-            DB::raw('COUNT(data_kendaraan.id) as total')
-        )
-        ->leftJoin('data_kendaraan', 'jenis_kendaraan.id', '=', 'data_kendaraan.id_jenis')
-        ->leftJoin('departments', 'data_kendaraan.id_department', '=', 'departments.id')
-        ->where(function ($q) use ($excludedDept) {
-            $q->whereNotIn('departments.nama', $excludedDept)
-            ->orWhereNull('departments.id');
-        })
-        ->groupBy('jenis_kendaraan.id', 'jenis_kendaraan.nama')
-        ->orderByDesc('total')
-        ->orderBy('jenis_kendaraan.nama')
-        ->get();
+            ->select(
+                'jenis_kendaraan.id',
+                'jenis_kendaraan.nama',
+                DB::raw('COUNT(data_kendaraan.id) as total')
+            )
+            ->leftJoin('data_kendaraan', 'jenis_kendaraan.id', '=', 'data_kendaraan.id_jenis')
+            ->leftJoin('departments', 'data_kendaraan.id_department', '=', 'departments.id')
+            ->where(function ($q) use ($excludedDept) {
+                $q->whereNotIn('departments.nama', $excludedDept)
+                    ->orWhereNull('departments.id');
+            })
+            ->groupBy('jenis_kendaraan.id', 'jenis_kendaraan.nama')
+            ->orderByDesc('total')
+            ->orderBy('jenis_kendaraan.nama')
+            ->get();
 
         // Susun rows per UPTD
         $rows = $uptdList->map(function ($uptd) use ($penugasanTotals, $jenisTpsTotals, $jenisKendaraanTotals, $matrixPetugas, $matrixTps, $matrixKendaraan) {
@@ -312,15 +359,34 @@ class DashboardController extends Controller
                 $countsPenugasan[$p->nama] = (int) ($deptPenugasanMap[$p->id] ?? 0);
             }
 
+            // $countsJenisTps = [];
+            // foreach ($jenisTpsTotals as $j) {
+            //     $countsJenisTps[$j->nama] = (int) ($deptJenisTpsMap[$j->id] ?? 0);
+            // }
             $countsJenisTps = [];
             foreach ($jenisTpsTotals as $j) {
-                $countsJenisTps[$j->nama] = (int) ($deptJenisTpsMap[$j->id] ?? 0);
+                $val = $deptJenisTpsMap->get($j->id, ['jumlah' => 0, 'volume' => 0]);
+                $countsJenisTps[$j->nama] = [
+                    'jumlah' => (int) ($val['jumlah'] ?? 0),
+                    'volume' => (float) ($val['volume'] ?? 0),
+                ];
             }
+
+            $namaExclude = 'Sampah Liar';
+
+            $totalVolume2 = collect($countsJenisTps)
+            ->sum(fn($x) => (int) ($x['volume'] ?? 0));
+
+            $totalVolume1 = collect($countsJenisTps)
+            ->reject(fn($val, $nama) => $nama === $namaExclude)
+            ->sum(fn($x) => (int) ($x['volume'] ?? 0));
 
             $countsJenisKendaraan = [];
             foreach ($jenisKendaraanTotals as $jk) {
                 $countsJenisKendaraan[$jk->nama] = (int) ($deptKendaraanMap[$jk->id] ?? 0);
             }
+
+            $tpsTotal = collect($countsJenisTps)->sum(fn($x) => (int) ($x['jumlah'] ?? 0));
 
             return [
                 'uptd_id'   => $uptd->id,
@@ -329,8 +395,17 @@ class DashboardController extends Controller
                 'petugas_total' => (int) $deptPenugasanMap->sum(),
                 'petugas_counts' => $countsPenugasan,
 
-                'tps_total' => (int) $deptJenisTpsMap->sum(),
+                // 'tps_total' => (int) $deptJenisTpsMap->sum(),
+                // 'tps_counts' => $countsJenisTps,
+
+                // 'tps_total'       => (int) $tpsTotal,
+                // 'tps_counts'      => $countsJenisTps,
+
+                'tps_total' => (int) $tpsTotal,        // total TPS = semua jumlah
                 'tps_counts' => $countsJenisTps,
+
+                'tps_total_volume_1' => (int) $totalVolume1,
+                'tps_total_volume_2' => (int) $totalVolume2,
 
                 'kendaraan_total'   => (int) $deptKendaraanMap->sum(),
                 'kendaraan_counts'  => $countsJenisKendaraan,
@@ -344,7 +419,8 @@ class DashboardController extends Controller
             'total_uptd'      => $total_uptd,
 
             'penugasan_headers' => $penugasanTotals->pluck('nama'),
-            'jenis_tps_headers' => $jenisTpsTotals->pluck('nama'),
+            // 'jenis_tps_headers' => $jenisTpsTotals->pluck('nama'),
+            'jenis_tps_headers' => $jenisTpsTotals->pluck('nama')->values(),
             'jenis_kendaraan_headers' => $jenisKendaraanTotals->pluck('nama'),
 
             'rows' => $rows,

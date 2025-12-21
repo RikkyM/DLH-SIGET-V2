@@ -119,7 +119,7 @@ const Homepage = () => {
   const [loadingFilters, setLoadingFilters] = useState(false);
   const [errorFilters, setErrorFilters] = useState<string | null>(null);
 
-  console.log(errorFilters);
+  console.warn(errorFilters);
 
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   // const [loadingMarkers, setLoadingMarkers] = useState(false);

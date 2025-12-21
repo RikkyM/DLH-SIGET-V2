@@ -1,5 +1,6 @@
 export const PAGE_TITLE: Record<string, string> = {
   "/dashboard": "Dashboard",
+  "/penampungan-sementara": "Penampungan Sementara",
 
   // Master Data
 //   "/master-data/kategori-kerja": "Kategori Kerja",

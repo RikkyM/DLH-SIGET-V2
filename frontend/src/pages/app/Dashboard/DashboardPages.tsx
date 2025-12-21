@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { http } from "@/services/http";
 import Table from "./components/Table";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import TableTitikSampah from "./components/TableTitikSampah";
+
+type TpsCount = { jumlah: number; volume: number };
 
 type DashboardRow = {
   uptd_id: number;
@@ -10,11 +13,16 @@ type DashboardRow = {
   petugas_total: number;
   petugas_counts: Record<string, number>;
 
+  // tps_total: number;
+  // tps_counts: Record<string, number>;
   tps_total: number;
-  tps_counts: Record<string, number>;
+  tps_counts: Record<string, TpsCount>;
 
   kendaraan_total: number;
   kendaraan_counts: Record<string, number>;
+
+  tps_total_volume_1: number; // exclude "Titik Sampah Liar" (berdasarkan jumlah)
+  tps_total_volume_2: number;
 };
 
 type DashboardRes = {
@@ -41,12 +49,30 @@ const DashboardPages = () => {
     counts: r.petugas_counts,
   }));
 
+  // const jenisTpsRows = (data?.rows ?? []).map((r) => ({
+  //   uptd_id: r.uptd_id,
+  //   uptd_nama: r.uptd_nama,
+  //   total: r.tps_total,
+  //   counts: r.tps_counts,
+  // }));
+
+  // const jenisTpsRows = (data?.rows ?? []).map((r) => ({
+  //   uptd_id: r.uptd_id,
+  //   uptd_nama: r.uptd_nama,
+  //   total_tps: r.tps_total,
+  //   counts: r.tps_counts,
+  // }));
+  
   const jenisTpsRows = (data?.rows ?? []).map((r) => ({
     uptd_id: r.uptd_id,
     uptd_nama: r.uptd_nama,
-    total: r.tps_total,
+    total_tps: r.tps_total,
     counts: r.tps_counts,
+
+    total_volume_1: r.tps_total_volume_1,
+    total_volume_2: r.tps_total_volume_2,
   }));
+
 
   const jenisKendaraanRows = (data?.rows ?? []).map((r) => ({
     uptd_id: r.uptd_id,
@@ -92,7 +118,7 @@ const DashboardPages = () => {
         rows={penugasanRows}
       />
 
-      <Table
+      <TableTitikSampah
         title="Jumlah Tempat Penampungan Sementara (TPS)"
         subtitle="Data tempat penampungan sementara berdasarkan wilayah UPTD"
         headers={data?.jenis_tps_headers ?? []}

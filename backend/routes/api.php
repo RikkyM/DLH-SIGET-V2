@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FilterController;
+use App\Http\Controllers\JenisKendaraan\JenisKendaraanController;
 use App\Http\Controllers\JTSController;
 use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\PenugasanController;
@@ -44,9 +45,13 @@ Route::middleware('web')->group(function () {
 
         Route::get('/dashboard', [DashboardController::class, 'index']);
         Route::get('/petugas', [PetugasController::class, 'index']);
-        Route::put('/petugas/{id}', [PetugasController::class, 'update']);
+        Route::get('/penampungan-sementara', [JTSController::class, 'index']);
+
+        // Route::put('/petugas/{id}', [PetugasController::class, 'update']);
 
         Route::get('/department', [DepartmentController::class, 'getDepartment']);
         Route::get('/penugasan', [PenugasanController::class, 'getPenugasan']);
+        Route::get('/jts', [JTSController::class, 'getJts']);
+        Route::get('/jenis-kendaraan', [JenisKendaraanController::class, 'getJenisKendaraan']);
     });
 });

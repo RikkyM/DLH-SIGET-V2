@@ -7,6 +7,7 @@ import Homepage from "@/pages/public/Home/Homepage";
 import GuestRoute from "./guards/GuestRoute";
 import DashboardPages from "@/pages/app/Dashboard/DashboardPages";
 import PetugasPages from "@/pages/app/Petugas/PetugasPages";
+import PenampunganPages from "@/pages/app/Penampungan-Sementara/PenampunganPages";
 
 export const AppRoutes = () => {
   return (
@@ -24,6 +25,7 @@ export const AppRoutes = () => {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPages />} />
         <Route path="/petugas" element={<PetugasPages />} />
+        <Route path="/penampungan-sementara" element={<PenampunganPages />} />
       </Route>
     </Routes>
   );

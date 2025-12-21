@@ -94,17 +94,15 @@ class FilterController extends Controller
         // $shouldLoadTitik = !empty($departmentIds) || !empty($penampunganIds) || !empty($lambungIds);
         // $shouldLoadPetugas = !empty($departmentIds) || !empty($penugasanIds);
 
-        $hasDepartment   = !empty($departmentIds);
-        $hasDepartment   = !empty($departmentIds);
-        $hasPenugasan    = !empty($penugasanIds);
-        $hasTitikFilter  = !empty($penampunganIds) || !empty($lambungIds);
+        $hasDepartment  = !empty($departmentIds);
+        $hasPenugasan   = !empty($penugasanIds);
+        $hasPenampungan = !empty($penampunganIds);
+        $hasLambung     = !empty($lambungIds);
 
-        // showBoth hanya ketika user cuma pilih department (tanpa penugasan & tanpa filter titik)
-        $showBoth = $hasDepartment && !$hasPenugasan && !$hasTitikFilter;
+        $showBoth = $hasDepartment && !$hasPenugasan && !$hasPenampungan && !$hasLambung;
 
-        // KUNCI: kalau titik filter ada, titik harus load meski penugasan juga ada
         $shouldLoadPetugas = $hasPenugasan || $showBoth;
-        $shouldLoadTitik   = $hasTitikFilter || $showBoth;
+        $shouldLoadTitik   = $hasPenampungan || $hasLambung || $showBoth;
 
 
         $titikSampah = $shouldLoadTitik
@@ -113,9 +111,9 @@ class FilterController extends Controller
             ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_jts', 'id_jk', 'armada', 'rute_kerja', 'vol_sampah', 'kecamatan', 'kelurahan', 'no_lambung')
             ->whereNotNull('latitude')->whereNotNull('longitude')
             ->where('latitude', '!=', '')->where('longitude', '!=', '')
-            ->whereHas('jenisTitikSampah', function ($data) {
-                $data->whereNotIn('nama', ['WR', 'SAMPAH LIAR']);
-            })
+            // ->whereHas('jenisTitikSampah', function ($data) {
+            //     $data->whereNotIn('nama', ['WR', 'SAMPAH LIAR']);
+            // })
             ->when($hasDepartment, fn($q) => $q->whereIn('id_department', $departmentIds))
             ->when(!empty($penampunganIds), fn($q) => $q->whereIn('id_jts', $penampunganIds))
             ->when(!empty($lambungIds), fn($q) => $q->whereIn('armada', $lambungIds))
@@ -177,7 +175,7 @@ class FilterController extends Controller
         return response()->json([
             'data' => $titikSampah->concat($petugas)->values(),
             // bantu debug kalau perlu:
-            'debug' => compact('departmentIds', 'penugasanIds'),
+            'debug' => compact('departmentIds', 'penugasanIds', 'penampunganIds', 'lambungIds'),
         ]);
     }
 }
