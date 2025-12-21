@@ -12,9 +12,10 @@ class PetugasController extends Controller
     {
         $search = $request->input('search');
 
-        $petugas = Petugas::whereHas('department', function ($data) {
+        $petugas = Petugas::with('penugasan', 'department')->whereHas('department', function ($data) {
             $data->whereNotIn('nama', ['Our Company', 'SEKRETARIAT', 'NON AKTIF']);
         })
+            
             ->where(fn($q) => $q->whereNotNull('nama')->where('nama', '!=', '')->where('nama', 'not like', '%admin%'))
             ->when($search, fn($q) => $q->where('nama', 'like', "%{$search}%"))
             ->orderBy('nama', 'asc')
@@ -31,6 +32,7 @@ class PetugasController extends Controller
     {
         $validated = $request->validate([
             'nama' => ['nullable', 'string', 'max:255'],
+            'rute_kerja' => 'nullable|max:255',
             'status' => ['nullable', 'in:aktif,tidak aktif'],
         ]);
 

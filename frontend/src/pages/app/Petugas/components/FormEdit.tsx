@@ -1,15 +1,37 @@
 import { useDialog } from "@/hooks/useDialog";
-import { memo, useEffect, useState, type FormEvent } from "react";
-import { RefreshCcw } from "lucide-react";
+import {
+  memo,
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
+import { RefreshCcw, RefreshCw } from "lucide-react";
 import type { PetugasForm, PetugasRes } from "../__types";
 import { http } from "@/services/http";
 import axios from "axios";
+// import { useDepartments } from "@/hooks/useDepartments";
+import { usePenugasan } from "@/hooks/usePenugasan";
 
 const FormEdit = ({ refetch = () => {} }: { refetch?: () => void }) => {
   const { isOpen, data, closeDialog } = useDialog<PetugasRes>();
+  // const {
+  //   departments,
+  //   loading: loadingDept,
+  //   error: errorDept,
+  //   refetch: getDept,
+  // } = useDepartments({ autoFetch: false });
+  const {
+    penugasan,
+    loading: loadingPenugasan,
+    error: errorPenugasan,
+    refetch: getPenugasan,
+  } = usePenugasan({ autoFetch: false });
 
   const [formData, setFormData] = useState<PetugasForm>({
+    id_penugasan: null,
     nama: "",
+    rute_kerja: "",
     status: "",
   });
   const [loading, setLoading] = useState(false);
@@ -18,10 +40,17 @@ const FormEdit = ({ refetch = () => {} }: { refetch?: () => void }) => {
     if (!isOpen || !data) return;
 
     setFormData({
+      id_penugasan: data?.id_penugasan || null,
       nama: data?.nama || "",
+      rute_kerja: data?.rute_kerja || "",
       status: data?.status || "",
     });
-  }, [data, isOpen]);
+
+    // if (departments.length > 0) return;
+    if (penugasan.length > 0) return;
+    // getDept();
+    getPenugasan();
+  }, [data, isOpen, getPenugasan, penugasan.length]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,29 +78,91 @@ const FormEdit = ({ refetch = () => {} }: { refetch?: () => void }) => {
     }
   };
 
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
   return (
     <section
       onClick={(e) => e.stopPropagation()}
-      className={`w-full max-w-xl space-y-3 rounded-sm bg-white p-3 shadow transition-all duration-300 ${
+      className={`max-h-full w-full max-w-xl space-y-3 overflow-auto rounded-sm bg-white p-3 shadow transition-all duration-300 ${
         isOpen ? "scale-100" : "scale-95"
       }`}
     >
-      <h2 className="font-semibold lg:text-lg">Edit Jenis Kendaraan</h2>
+      <h2 className="font-semibold lg:text-lg">Edit Petugas</h2>
       <form onSubmit={handleSubmit} className="w-full space-y-2">
         <div className="space-y-1 text-sm">
           <label htmlFor="nama" className="block font-medium">
-            Nama Jenis Kendaraan
+            Nama Petugas
           </label>
           <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5"
+            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
             type="text"
             id="nama"
             name="nama"
             placeholder="Masukkan nama unit kerja..."
             value={formData?.nama || ""}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, nama: e.target.value }))
-            }
+            onChange={handleChange}
+          />
+          {/* {error.nama && (
+            <p className="text-xs text-red-500">{error.nama[0]}</p>
+          )} */}
+        </div>
+        <div className="space-y-1 text-sm">
+          <label htmlFor="penugasan" className="block font-medium">
+            Penugasan
+          </label>
+          {/* <input
+            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
+            type="text"
+            id="penugasan"
+            name="penugasan"
+            placeholder="Masukkan nama unit kerja..."
+            value={formData?.id_penugasan || ""}
+            onChange={handleChange}
+          /> */}
+          {/* {error.nama && (
+            <p className="text-xs text-red-500">{error.nama[0]}</p>
+          )} */}
+
+          {loadingPenugasan ? (
+            <RefreshCw className="animate-spin max-w-4.5"/>
+          ) : (
+            <select
+            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
+            id="penugasan"
+            name="penugasan"
+            value={formData?.id_penugasan || ""}
+            onChange={handleChange}
+          >
+            <option value="" disabled hidden>Pilih Penugasan</option>
+            {penugasan.map((p, index) => (
+              <option key={p.id ?? index} value={p.id}>
+                {p.nama}
+              </option>
+            ))}
+          </select>
+          )}
+          {errorPenugasan && (
+            <p className="text-xs text-red-500">{errorPenugasan}</p>
+          )}
+        </div>
+        <div className="space-y-1 text-sm">
+          <label htmlFor="rute_kerja" className="block font-medium">
+            Rute Kerja
+          </label>
+          <textarea
+            className="max-h-20 min-h-16 w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
+            id="rute_kerja"
+            name="rute_kerja"
+            placeholder="Masukkan rute kerja..."
+            value={formData?.rute_kerja || ""}
+            onChange={handleChange}
           />
           {/* {error.nama && (
             <p className="text-xs text-red-500">{error.nama[0]}</p>
@@ -84,11 +175,9 @@ const FormEdit = ({ refetch = () => {} }: { refetch?: () => void }) => {
           <select
             name="status"
             id="status"
-            className="w-full cursor-pointer appearance-none rounded border border-gray-300 bg-transparent px-3 py-1.5"
+            className="w-full cursor-pointer appearance-none rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
             value={formData?.status ?? ""}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, status: e.target.value }))
-            }
+            onChange={handleChange}
           >
             <option value="" disabled hidden>
               Pilih Status

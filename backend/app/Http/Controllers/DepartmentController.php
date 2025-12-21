@@ -41,4 +41,18 @@ class DepartmentController extends Controller
             // 'jenis_titik_sampah' => $jenisTitikSampah,
         ]);
     }
+
+    public function getDepartment()
+    {
+        $departments =  Department::query()
+            ->select('id', 'nama')
+            ->whereNotIn('nama', ['Our Company', 'NON AKTIF', 'SEKRETARIAT'])
+            ->orderBy('nama')
+            ->get()
+            ->values();
+
+            return response()->json([
+                'departments' => $departments
+            ]);
+    }
 }

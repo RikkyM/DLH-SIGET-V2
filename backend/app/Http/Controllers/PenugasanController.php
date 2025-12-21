@@ -35,11 +35,22 @@ class PenugasanController extends Controller
                 'count' => (int) $p->petugas->count(),
             ]);
 
-        // ✅ RULE: jika department dipilih → buang yang count = 0
         if (!empty($departmentIds)) {
             $items = $items->filter(fn($x) => $x['count'] > 0)->values();
         }
 
         return response()->json(['penugasan' => $items]);
+    }
+
+    public function getPenugasan()
+    {
+        $penugasan = Penugasan::query()
+            ->select('id', 'nama')
+            ->orderBy('nama')
+            ->get();
+
+        return response()->json([
+            'penugasan' => $penugasan
+        ]);
     }
 }

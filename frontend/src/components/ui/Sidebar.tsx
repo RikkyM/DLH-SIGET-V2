@@ -44,7 +44,7 @@ const Sidebar = () => {
             ].join(" ")
           }
         >
-          Titik Sampah
+          Penampungan Sementara
         </NavLink>
         <NavLink
           to="/data-penugasan"
