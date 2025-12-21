@@ -10,4 +10,6 @@ Route::get('/', function () {
 Route::controller(ImportController::class)->group(function () {
     Route::get('/import-petugas', 'importPetugas')->name('import-petugas');
     Route::post('/import-petugas', 'importPetugasProcess');
+    Route::get('/import-kendaraan-petugas', 'kendaraanPetugas')->name('import-kendaraan-petugas');
+    Route::post('/import-kendaraan-petugas', 'kendaraanPetugasProcess');
 });
