@@ -1,5 +1,5 @@
 import { useDialog } from "@/hooks/useDialog";
-import { Pencil } from "lucide-react";
+import { FileText } from "lucide-react";
 import type { PetugasRes } from "../__types";
 
 type Props = {
@@ -13,7 +13,7 @@ const EditButton = ({ data }: Props) => {
       onClick={() => openDialog(data)}
       className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200"
     >
-      <Pencil className="max-w-4.5" />
+      <FileText className="max-w-6" />
     </button>
   );
 };

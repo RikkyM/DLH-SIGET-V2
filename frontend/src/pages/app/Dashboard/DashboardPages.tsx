@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { http } from "@/services/http";
 import Table from "./components/Table";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type DashboardRow = {
   uptd_id: number;
@@ -30,6 +31,7 @@ type DashboardRes = {
 };
 
 const DashboardPages = () => {
+  useDocumentTitle("Dashboard");
   const [data, setData] = useState<DashboardRes | null>(null);
 
   const penugasanRows = (data?.rows ?? []).map((r) => ({
@@ -72,7 +74,9 @@ const DashboardPages = () => {
           <p className="text-xl font-medium">{data?.total_kendaraan ?? "-"}</p>
         </div>
         <div className="flex flex-col">
-          <h4 className="text-xl font-semibold">Tempat Penampungan Sementara</h4>
+          <h4 className="text-xl font-semibold">
+            Tempat Penampungan Sementara
+          </h4>
           <p className="text-xl font-medium">{data?.total_tps ?? "-"}</p>
         </div>
         <div className="flex flex-col">

@@ -13,12 +13,17 @@ return new class extends Migration
     {
         Schema::create('data_kendaraan', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_jenis')->nullable()->constrained('jenis_kendaraan')->cascadeOnUpdate()->nullOnDelete();
-            $table->string('no_plat')->unique();
+            $table->unsignedBigInteger('id_jenis')->nullable()->index();
+            $table->unsignedBigInteger('id_department')->nullable()->index();
+            $table->unsignedBigInteger('id_petugas')->nullable()->index();
+            $table->string('no_plat');
             $table->string('merk');
-            $table->string('lambung')->nullable();
+            $table->string('lambung_lama')->nullable();
+            $table->string('lambung_baru')->nullable();
             $table->string('no_rangka')->nullable();
             $table->string('no_mesin')->nullable();
+            $table->string('no_stnk')->nullable();
+            $table->string('tahun_pembuatan')->nullable();
             $table->integer('kapasitas_mesin')->nullable();
             $table->string('warna')->nullable();
             $table->integer('berat')->nullable();
@@ -26,8 +31,8 @@ return new class extends Migration
             $table->string('kondisi')->nullable();
             $table->json('foto_kendaraan')->nullable();
             $table->string('uptd')->nullable();
+            $table->string('nama_sopir')->nullable();
             $table->text('keterangan')->nullable();
-            $table->enum('status', ['aktif', 'nonaktif']);
             $table->timestamps();
         });
     }

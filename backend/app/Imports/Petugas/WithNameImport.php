@@ -26,7 +26,7 @@ class WithNameImport implements ToCollection, WithHeadingRow
             $kecamatan = Kecamatan::where('nama_kecamatan', $row['kecamatan'] ?? null)->first();
             $penugasan = Penugasan::where('nama', $row['jenis_petugas'] ?? null)->first();
 
-            // $datas[] = $petugas?->nama;
+            // $datas[] = $row;
 
             Petugas::updateOrCreate(
                 ['nama' => $row['nama'], 'id_department' => $department->id],
@@ -41,6 +41,8 @@ class WithNameImport implements ToCollection, WithHeadingRow
                     'nama_jalan' => null,
                     'nama_kelurahan' => null,
                     'nama_kecamatan' => $kecamatan->nama_kecamatan ?? null,
+                    // 'latitude' => null,
+                    // 'longitude' => null,
                     'latitude' => $row['latitude'] ?? null,
                     'longitude' => $row['longitude'] ?? null,
                     'panjang_jalur' => null,

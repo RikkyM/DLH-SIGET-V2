@@ -28,7 +28,12 @@ class JenisKendaraanSeeder extends Seeder
             'TANGKI',
             'TRONTON',
             'BACKHOE LOADER',
-            'TOW (DEREK)'
+            'TOW (DEREK)',
+            'WHALELOADER',
+            'EXCAVATOR MINI',
+            'SEDOT LUMPUR TINJA',
+            'MOTOR RODA 3 LISTRIK',
+            'TRAGA'
         ];
 
         foreach ($jenis as $kendaraan) {

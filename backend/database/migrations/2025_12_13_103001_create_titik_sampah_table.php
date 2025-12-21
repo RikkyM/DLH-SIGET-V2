@@ -32,12 +32,6 @@ return new class extends Migration
             $table->text('rute_kerja')->nullable();
             $table->text('keterangan')->nullable();
             $table->timestamps();
-
-            $table->foreign('armada')
-                ->references('no_plat')
-                ->on('data_kendaraan')
-                ->cascadeOnUpdate()
-                ->nullOnDelete();
         });
     }
 

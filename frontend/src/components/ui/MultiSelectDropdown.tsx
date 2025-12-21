@@ -4,7 +4,7 @@ export type MultiSelectOption = {
   value: string;
   label: string;
   count: number;
-  lambung: number;
+  lambung: string;
 };
 
 type Props = {
@@ -188,7 +188,7 @@ export default function MultiSelectDropdown({
                       {opt.label}
                       {showLambung ? (
                         <span className="ml-2 text-xs text-slate-500">
-                          (Lambung {opt.lambung ?? null})
+                          (Lambung {opt.lambung ?? "-"})
                         </span>
                       ) : null}
                       {showCount ? (

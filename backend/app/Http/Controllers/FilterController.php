@@ -11,70 +11,75 @@ use Illuminate\Support\Arr;
 
 class FilterController extends Controller
 {
+    // public function homepage(Request $request)
+    // {
+    //     // $departmentIds = $request->query('department', []); // ?department[]=1
+    //     // $penugasanIds  = $request->query('penugasan', []);  // ?penugasan[]=2
+
+    //     // // $data = Petugas::query()
+    //     // //     ->select('id', 'nama', 'latitude', 'longitude', 'id_department', 'id_penugasan')
+    //     // //     ->whereNotNull('latitude')
+    //     // //     ->whereNotNull('longitude')
+    //     // //     ->where('latitude', '!=', '')
+    //     // //     ->where('longitude', '!=', '')
+    //     // //     ->when(!empty($departmentIds), fn($q) => $q->whereIn('id_department', $departmentIds))
+    //     // //     ->when(!empty($penugasanIds), fn($q) => $q->whereIn('id_penugasan', $penugasanIds))
+    //     // //     ->get();
+
+    //     // // // dd($data);
+
+    //     // // return response()->json([
+    //     // //     'data' => $data,
+    //     // // ]);
+
+    //     // $titikSampah = TitikSampah::query()
+    //     //     ->select('id', 'nama', 'latitude', 'longitude', 'id_department')
+    //     //     ->whereNotNull('latitude')
+    //     //     ->whereNotNull('longitude')
+    //     //     ->where('latitude', '!=', '')
+    //     //     ->where('longitude', '!=', '')
+    //     //     ->when(!empty($departmentIds), fn($q) => $q->whereIn('id_department', $departmentIds))
+    //     //     ->get()
+    //     //     ->map(fn($t) => [
+    //     //         'id' => $t->id,
+    //     //         'nama' => $t->nama,
+    //     //         'latitude' => $t->latitude,
+    //     //         'longitude' => $t->longitude,
+    //     //         'type' => 'titik_sampah',
+    //     //         'id_department' => $t->id_department,
+    //     //         'id_penugasan' => null,
+    //     //     ]);
+
+    //     // // 2) Marker Petugas (filter by penugasan)
+    //     // $petugas = Petugas::query()
+    //     //     ->select('id', 'nama', 'latitude', 'longitude', 'id_department', 'id_penugasan')
+    //     //     ->whereNotNull('latitude')
+    //     //     ->whereNotNull('longitude')
+    //     //     ->where('latitude', '!=', '')
+    //     //     ->where('longitude', '!=', '')
+    //     //     ->when(!empty($penugasanIds), fn($q) => $q->whereIn('id_penugasan', $penugasanIds))
+    //     //     ->get()
+    //     //     ->map(fn($p) => [
+    //     //         'id' => $p->id,
+    //     //         'nama' => $p->nama,
+    //     //         'latitude' => $p->latitude,
+    //     //         'longitude' => $p->longitude,
+    //     //         'type' => 'petugas',
+    //     //         'id_department' => $p->id_department,
+    //     //         'id_penugasan' => $p->id_penugasan,
+    //     //     ]);
+
+    //     //     dd($titikSampah->concat($petugas)->values());
+
+    //     // return response()->json([
+    //     //     'data' => $titikSampah->concat($petugas)->values(),
+    //     // ]);
+
+
+    // }
+
     public function homepage(Request $request)
     {
-        // $departmentIds = $request->query('department', []); // ?department[]=1
-        // $penugasanIds  = $request->query('penugasan', []);  // ?penugasan[]=2
-
-        // // $data = Petugas::query()
-        // //     ->select('id', 'nama', 'latitude', 'longitude', 'id_department', 'id_penugasan')
-        // //     ->whereNotNull('latitude')
-        // //     ->whereNotNull('longitude')
-        // //     ->where('latitude', '!=', '')
-        // //     ->where('longitude', '!=', '')
-        // //     ->when(!empty($departmentIds), fn($q) => $q->whereIn('id_department', $departmentIds))
-        // //     ->when(!empty($penugasanIds), fn($q) => $q->whereIn('id_penugasan', $penugasanIds))
-        // //     ->get();
-
-        // // // dd($data);
-
-        // // return response()->json([
-        // //     'data' => $data,
-        // // ]);
-
-        // $titikSampah = TitikSampah::query()
-        //     ->select('id', 'nama', 'latitude', 'longitude', 'id_department')
-        //     ->whereNotNull('latitude')
-        //     ->whereNotNull('longitude')
-        //     ->where('latitude', '!=', '')
-        //     ->where('longitude', '!=', '')
-        //     ->when(!empty($departmentIds), fn($q) => $q->whereIn('id_department', $departmentIds))
-        //     ->get()
-        //     ->map(fn($t) => [
-        //         'id' => $t->id,
-        //         'nama' => $t->nama,
-        //         'latitude' => $t->latitude,
-        //         'longitude' => $t->longitude,
-        //         'type' => 'titik_sampah',
-        //         'id_department' => $t->id_department,
-        //         'id_penugasan' => null,
-        //     ]);
-
-        // // 2) Marker Petugas (filter by penugasan)
-        // $petugas = Petugas::query()
-        //     ->select('id', 'nama', 'latitude', 'longitude', 'id_department', 'id_penugasan')
-        //     ->whereNotNull('latitude')
-        //     ->whereNotNull('longitude')
-        //     ->where('latitude', '!=', '')
-        //     ->where('longitude', '!=', '')
-        //     ->when(!empty($penugasanIds), fn($q) => $q->whereIn('id_penugasan', $penugasanIds))
-        //     ->get()
-        //     ->map(fn($p) => [
-        //         'id' => $p->id,
-        //         'nama' => $p->nama,
-        //         'latitude' => $p->latitude,
-        //         'longitude' => $p->longitude,
-        //         'type' => 'petugas',
-        //         'id_department' => $p->id_department,
-        //         'id_penugasan' => $p->id_penugasan,
-        //     ]);
-
-        //     dd($titikSampah->concat($petugas)->values());
-
-        // return response()->json([
-        //     'data' => $titikSampah->concat($petugas)->values(),
-        // ]);
-
         $departmentIds  = Arr::wrap($request->query('department', []));
         $penugasanIds   = Arr::wrap($request->query('penugasan', []));
         $penampunganIds = Arr::wrap($request->query('penampungan', []));
@@ -90,23 +95,27 @@ class FilterController extends Controller
         // $shouldLoadPetugas = !empty($departmentIds) || !empty($penugasanIds);
 
         $hasDepartment   = !empty($departmentIds);
+        $hasDepartment   = !empty($departmentIds);
         $hasPenugasan    = !empty($penugasanIds);
         $hasTitikFilter  = !empty($penampunganIds) || !empty($lambungIds);
 
-        $showOnlyPetugas = $hasPenugasan;
-        $showOnlyTitik   = !$hasPenugasan && $hasTitikFilter;
-        $showBoth        = $hasDepartment && !$hasPenugasan && !$hasTitikFilter;
+        // showBoth hanya ketika user cuma pilih department (tanpa penugasan & tanpa filter titik)
+        $showBoth = $hasDepartment && !$hasPenugasan && !$hasTitikFilter;
 
-        $shouldLoadPetugas = $showBoth || $showOnlyPetugas;
-        $shouldLoadTitik   = $showBoth || $showOnlyTitik;
+        // KUNCI: kalau titik filter ada, titik harus load meski penugasan juga ada
+        $shouldLoadPetugas = $hasPenugasan || $showBoth;
+        $shouldLoadTitik   = $hasTitikFilter || $showBoth;
 
 
         $titikSampah = $shouldLoadTitik
-        ? TitikSampah::query()
-        ->with('jenisTitikSampah', 'jenisKendaraan')
+            ? TitikSampah::query()
+            ->with('jenisTitikSampah', 'jenisKendaraan', 'kendaraan')
             ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_jts', 'id_jk', 'armada', 'rute_kerja', 'vol_sampah', 'kecamatan', 'kelurahan', 'no_lambung')
             ->whereNotNull('latitude')->whereNotNull('longitude')
             ->where('latitude', '!=', '')->where('longitude', '!=', '')
+            ->whereHas('jenisTitikSampah', function ($data) {
+                $data->whereNotIn('nama', ['WR', 'SAMPAH LIAR']);
+            })
             ->when($hasDepartment, fn($q) => $q->whereIn('id_department', $departmentIds))
             ->when(!empty($penampunganIds), fn($q) => $q->whereIn('id_jts', $penampunganIds))
             ->when(!empty($lambungIds), fn($q) => $q->whereIn('armada', $lambungIds))
@@ -138,9 +147,9 @@ class FilterController extends Controller
 
         // Petugas hanya kalau penugasan dipilih
         $petugas = $shouldLoadPetugas
-        ? Petugas::query()
-        ->with('kendaraan.jenisKendaraan')
-        ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_penugasan', 'rute_kerja', 'panjang_jalur', 'nama_kecamatan', 'nama_kelurahan')
+            ? Petugas::query()
+            ->with('kendaraan.jenisKendaraan')
+            ->select('id', 'nama', 'nama_jalan', 'latitude', 'longitude', 'id_department', 'id_penugasan', 'rute_kerja', 'panjang_jalur', 'nama_kecamatan', 'nama_kelurahan')
             ->whereNotNull('latitude')->whereNotNull('longitude')
             ->where('latitude', '!=', '')->where('longitude', '!=', '')
             ->when($hasDepartment, fn($q) => $q->whereIn('id_department', $departmentIds))
@@ -164,7 +173,6 @@ class FilterController extends Controller
                 'jenis_kendaraan' => $p->jenisKendaraan?->nama,
             ])
             : collect();
-
 
         return response()->json([
             'data' => $titikSampah->concat($petugas)->values(),

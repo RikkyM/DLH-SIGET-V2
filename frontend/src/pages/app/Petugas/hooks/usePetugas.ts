@@ -1,46 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
+import { useMemo } from "react";
 import type { PetugasRes } from "../__types";
-import { http } from "@/services/http";
+import { usePaginatedQuery } from "@/hooks/usePaginatedQuery";
 
-type PetugasState = {
-  data: PetugasRes[] | [];
-  loading: boolean;
-  error: string | null;
-};
-
-export const usePetugas = (search?: string) => {
-  const [state, setState] = useState<PetugasState>({
-    data: [],
-    loading: false,
-    error: null,
+export const usePetugas = (
+  search: string,
+  unit_kerja?: number,
+  penugasan?: number,
+) => {
+  const params = useMemo(
+    () => ({ search: search || undefined, unit_kerja, penugasan }),
+    [search, unit_kerja, penugasan],
+  );
+  return usePaginatedQuery<PetugasRes>({
+    url: "/api/petugas",
+    params,
+    initialPerPage: 25,
+    enabled: true,
   });
-
-  const getPetugas = useCallback(async () => {
-    setState((prev) => ({ ...prev, loading: true }));
-
-    try {
-      const res = await http.get("/api/petugas", {
-        params: { search }
-      });
-
-      setState((prev) => ({ ...prev, data: res.data.data, loading: false }));
-    } catch (err: unknown) {
-      if (err instanceof DOMException) return;
-
-      setState((prev) => ({ ...prev, data: [], error: "Gagal mengambil data petugas." }));
-    } finally {
-      setState((prev) => ({ ...prev, loading: false }));
-    }
-  }, [search]);
-
-  useEffect(() => {
-    void getPetugas();
-  }, [getPetugas]);
-
-  return {
-    data: state.data,
-    loading: state.loading,
-    error: state.error,
-    fetch: getPetugas,
-  };
 };

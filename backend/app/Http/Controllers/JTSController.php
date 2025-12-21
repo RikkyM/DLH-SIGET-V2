@@ -17,6 +17,7 @@ class JTSController extends Controller
 
         $items = JenisTitikSampah::query()
         ->select('id', 'nama')
+        ->whereNotIn('nama', ['WR', 'SAMPAH LIAR'])
         ->withCount([
             'titikSampah as count' => function ($q) use ($departmentIds) {
                 $q->when(!empty($departmentIds), fn($qq) => $qq->whereIn('id_department', $departmentIds));

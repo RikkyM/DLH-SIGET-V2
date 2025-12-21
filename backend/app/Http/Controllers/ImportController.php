@@ -24,7 +24,7 @@ class ImportController extends Controller
             ]);
         }
 
-        Excel::import(new WithNikImport, $request->file('file'));
+        Excel::import(new WithNameImport, $request->file('file'));
         return back();
     }
 

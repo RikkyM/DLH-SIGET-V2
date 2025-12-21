@@ -36,7 +36,7 @@ Route::prefix('filters')->group(function () {
 Route::middleware('web')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
         Route::get('/user', function (Request $request) {
             return response()->json(Auth::user());
         });

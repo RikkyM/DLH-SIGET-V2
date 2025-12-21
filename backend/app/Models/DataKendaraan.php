@@ -10,11 +10,16 @@ class DataKendaraan extends Model
 
     protected $fillable = [
         'id_jenis',
+        'id_department',
+        'id_petugas',
         'no_plat',
         'merk',
-        'lambung',
+        'lambung_lama',
+        'lambung_baru',
         'no_rangka',
         'no_mesin',
+        'no_stnk',
+        'tahun_pembuatan',
         'kapasitas_mesin',
         'warna',
         'berat',
@@ -22,8 +27,8 @@ class DataKendaraan extends Model
         'kondisi',
         'foto_kendaraan',
         'uptd',
+        'nama_sopir',
         'keterangan',
-        'status'
     ];
 
     public function jenisKendaraan()

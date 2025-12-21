@@ -8,9 +8,19 @@ export type PetugasRes = {
   department: {
     nama: string;
   };
+  tempat_lahir: string;
+  tanggal_lahir: string;
+  usia: number;
+  jenis_kelamin: string;
+  alamat: string;
+  rt: string;
+  rw: string;
+  agama: string;
+  status_perkawinan: string;
   penugasan: {
     nama: string;
   };
+  gol_darah: string;
   nama_kecamatan: string;
   nama_kelurahan: string;
   rute_kerja: string;
