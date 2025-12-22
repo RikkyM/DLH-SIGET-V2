@@ -23,26 +23,26 @@ const Table = ({ title, subtitle, headers, rows }: MatrixTableProps) => {
         <p className="text-sm text-gray-400">{subtitle}</p>
       </div>
 
-      <div className="max-h-96 overflow-auto">
+      <div className="overflow-auto">
         <table className="w-full border-collapse">
-          <thead className="whitespace-nowrap">
-            <tr className="border-b border-gray-400">
-              <th className="sticky top-0 z-30 w-16 bg-white p-2 text-left">
+          <thead>
+            <tr className="*:border-b border-gray-400">
+              <th className="sticky top-0 z-10 w-16 bg-white p-2 text-left">
                 No.
               </th>
 
-              <th className="sticky top-0 left-0 z-40 bg-white p-2 text-left">
+              <th className="sticky top-0 left-0 z-10 bg-white p-2 text-left">
                 <div className="min-w-40">Nama UPTD</div>
               </th>
 
-              <th className="sticky top-0 z-30 bg-white p-2 text-center">
+              <th className="sticky top-0 z-0 bg-white p-2 text-center">
                 Total
               </th>
 
               {headers.map((h) => (
                 <th
                   key={h}
-                  className="sticky top-0 z-30 bg-white p-2 text-center"
+                  className="sticky top-0 z-0 bg-white p-2 text-center"
                 >
                   {h}
                 </th>
@@ -52,7 +52,7 @@ const Table = ({ title, subtitle, headers, rows }: MatrixTableProps) => {
 
           <tbody>
             {rows.map((row, idx) => (
-              <tr key={row.uptd_id} className="border-b">
+              <tr key={row.uptd_id} className="*:border-b">
                 <td className="p-2">{idx + 1}</td>
 
                 <td className="sticky left-0 z-20 bg-white p-2 whitespace-nowrap">
@@ -84,20 +84,20 @@ const Table = ({ title, subtitle, headers, rows }: MatrixTableProps) => {
           {/* Sticky footer TOTAL */}
           <tfoot className="whitespace-nowrap">
             <tr className="border-t border-gray-400 font-semibold">
-              <td className="sticky bottom-0 z-30 bg-white p-2" />
+              <td className="sticky bottom-0 z-10 bg-white p-2" />
 
-              <td className="sticky bottom-0 left-0 z-40 bg-white p-2">
+              <td className="sticky bottom-0 left-0 z-10 bg-white p-2">
                 TOTAL
               </td>
 
-              <td className="sticky bottom-0 z-30 bg-white p-2 text-center">
+              <td className="sticky bottom-0 z-0 bg-white p-2 text-center">
                 {grandTotal}
               </td>
 
               {headers.map((h) => (
                 <td
                   key={h}
-                  className="sticky bottom-0 z-30 bg-white p-2 text-center"
+                  className="sticky bottom-0 z-0 bg-white p-2 text-center"
                 >
                   {totalsByHeader[h] ?? 0}
                 </td>

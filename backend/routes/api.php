@@ -22,19 +22,20 @@ use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 //     Route::get('/lambung', [KendaraanController::class, 'filterLambung']);
 // });
 
-Route::get(
-    '/homepage/map',
-    [FilterController::class, 'homepage']
-);
-
-Route::prefix('filters')->group(function () {
-    Route::get('/departments', [DepartmentController::class, 'filterDepartment']);
-    Route::get('/penugasan', [PenugasanController::class, 'filterPenugasan']);
-    Route::get('/penampungan', [JTSController::class, 'filterPenampungan']);
-    Route::get('/lambung', [KendaraanController::class, 'filterLambung']);
-});
 
 Route::middleware('web')->group(function () {
+    Route::get(
+        '/homepage/map',
+        [FilterController::class, 'homepage']
+    );
+
+    Route::prefix('filters')->group(function () {
+        Route::get('/departments', [DepartmentController::class, 'filterDepartment']);
+        Route::get('/penugasan', [PenugasanController::class, 'filterPenugasan']);
+        Route::get('/penampungan', [JTSController::class, 'filterPenampungan']);
+        Route::get('/lambung', [KendaraanController::class, 'filterLambung']);
+    });
+
     Route::post('/login', [AuthController::class, 'login']);
 
     Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {

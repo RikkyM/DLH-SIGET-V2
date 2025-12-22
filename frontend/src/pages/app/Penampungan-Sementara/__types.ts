@@ -16,6 +16,7 @@ export type PenampunganRes = {
   status_kontainer: string;
   foto_lokasi: string;
   rute_kerja: string;
+  no_lambung: string;
   keterangan: string;
   jenis_titik_sampah: {
     nama?: string;

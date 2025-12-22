@@ -6,6 +6,7 @@ use App\Models\JenisTitikSampah;
 use App\Models\TitikSampah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 
 class JTSController extends Controller
 {
@@ -18,12 +19,17 @@ class JTSController extends Controller
 
         $items = JenisTitikSampah::query()
             ->select('id', 'nama')
-            ->whereNotIn('nama', ['WR', 'SAMPAH LIAR'])
             ->withCount([
                 'titikSampah as count' => function ($q) use ($departmentIds) {
                     $q->when(!empty($departmentIds), fn($qq) => $qq->whereIn('id_department', $departmentIds));
                 }
             ])
+            ->when(!Auth::user(), function ($data) {
+                $data->whereNotIn('nama', ['WR', 'SAMPAH LIAR']);
+            })
+            ->when(Auth::user() && !in_array(Auth::user()->role, ['superadmin', 'admin']), function ($data) {
+                $data->whereNotIn('nama', ['WR', 'SAMPAH LIAR']);
+            })
             ->orderBy('nama')
             ->get()
             ->map(fn($jts) => [

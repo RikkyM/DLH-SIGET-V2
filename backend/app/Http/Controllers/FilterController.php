@@ -8,6 +8,7 @@ use App\Models\Petugas;
 use App\Models\TitikSampah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 
 class FilterController extends Controller
 {
@@ -114,6 +115,12 @@ class FilterController extends Controller
             // ->whereHas('jenisTitikSampah', function ($data) {
             //     $data->whereNotIn('nama', ['WR', 'SAMPAH LIAR']);
             // })
+            ->when(!Auth::user(), function ($data) {
+                $data->whereHas('jenisTitikSampah', fn($d) => $d->whereNotIn('nama', ['WR', 'SAMPAH LIAR']));
+            })
+            ->when(Auth::user() && !in_array(Auth::user()->role, ['superadmin', 'admin']), function ($data) {
+                $data->whereHas('jenisTitikSampah', fn($d) => $d->whereNotIn('nama', ['WR', 'SAMPAH LIAR']));
+            })
             ->when($hasDepartment, fn($q) => $q->whereIn('id_department', $departmentIds))
             ->when(!empty($penampunganIds), fn($q) => $q->whereIn('id_jts', $penampunganIds))
             ->when(!empty($lambungIds), fn($q) => $q->whereIn('armada', $lambungIds))

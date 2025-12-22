@@ -62,9 +62,11 @@ const PenampunganPages = () => {
         <td className="text-left">
           <div className="w-64">{d?.rute_kerja ?? "-"}</div>
         </td>
-        <td className="text-left">{d?.keterangan ?? "-"}</td>
         <td className="text-left">{d?.kendaraan?.nama_sopir ?? "-"}</td>
+        <td className="text-left whitespace-nowrap">{d?.armada ?? "-"}</td>
+        <td className="text-center whitespace-nowrap">{d?.no_lambung ?? "-"}</td>
         <td className="text-left">-</td>
+        <td className="text-left">{d?.keterangan ?? "-"}</td>
         <td className="text-center">
           <button
             type="button"
@@ -221,22 +223,26 @@ const PenampunganPages = () => {
             <>
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="whitespace-nowrap *:sticky *:top-0 *:bg-white *:p-2">
+                  <tr className="*:sticky *:top-0 *:bg-white *:p-2">
                     <th className="w-12">
                       <div className="w-12">#</div>
                     </th>
-                    <th className="text-left">Jenis Titik Sampah</th>
-                    <th className="text-left">Nama Titik Sampah</th>
+                    <th className="text-left whitespace-nowrap">Jenis TPS</th>
+                    <th className="text-left">Nama TPS</th>
                     <th className="text-left">Nama Jalan</th>
                     <th className="text-left">Kelurahan</th>
                     <th className="text-left">Kecamatan</th>
                     <th className="text-left">Jenis Kendaraan</th>
-                    <th className="text-center">Vol. Sampah</th>
+                    <th className="text-center whitespace-nowrap">
+                      Vol. Sampah
+                    </th>
                     <th className="text-center">Status Kontainer</th>
-                    <th className="text-left">Rute Kerja</th>
+                    <th className="text-left">Rute Angkutan</th>
+                    <th className="text-left whitespace-nowrap">Nama Sopir</th>
+                    <th className="text-left whitespace-nowrap">No. TNKB</th>
+                    <th className="text-left whitespace-nowrap">No. Lambung</th>
+                    <th className="text-left whitespace-nowrap">Foto Lokasi</th>
                     <th className="text-left">Keterangan</th>
-                    <th className="text-left">Nama Sopir</th>
-                    <th className="text-left">Foto Lokasi</th>
                     <th className="sticky top-0 right-0 z-10">Action</th>
                   </tr>
                 </thead>

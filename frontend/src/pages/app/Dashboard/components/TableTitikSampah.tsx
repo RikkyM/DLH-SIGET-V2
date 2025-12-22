@@ -67,26 +67,26 @@ export default function TableTpsTwoLevel({
         <p className="text-sm text-gray-400">{subtitle}</p>
       </div>
 
-      <div className="max-h-96 overflow-auto">
+      <div className="overflow-auto">
         <table className="w-full border-collapse">
           <thead className="whitespace-nowrap">
             <tr className="border-b border-gray-400">
               <th
-                className="sticky top-0 z-40 bg-white p-2 text-left"
+                className="sticky top-0 z-10 bg-white p-2 text-left"
                 rowSpan={2}
               >
                 No.
               </th>
 
               <th
-                className="sticky top-0 left-0 z-50 bg-white p-2 text-left"
+                className="sticky top-0 left-0 z-10 bg-white p-2 text-left"
                 rowSpan={2}
               >
                 <div className="min-w-40">Nama UPTD</div>
               </th>
 
               <th
-                className="sticky top-0 z-40 bg-white p-2 text-center"
+                className="sticky top-0 z-10 bg-white p-2 text-center"
                 rowSpan={2}
               >
                 Total TPS
@@ -95,7 +95,7 @@ export default function TableTpsTwoLevel({
               {headers.map((h) => (
                 <th
                   key={h}
-                  className="sticky top-0 z-40 bg-white p-2 text-center"
+                  className="sticky top-0 z-10 bg-white p-2 text-center"
                   colSpan={2}
                 >
                   {h}
@@ -103,13 +103,13 @@ export default function TableTpsTwoLevel({
               ))}
 
               <th
-                className="sticky top-0 z-40 bg-white p-2 text-center"
+                className="sticky top-0 z-10 bg-white p-2 text-center"
                 rowSpan={2}
               >
                 Total Volume Sampah 1
               </th>
               <th
-                className="sticky top-0 z-40 bg-white p-2 text-center"
+                className="sticky top-0 z-10 bg-white p-2 text-center"
                 rowSpan={2}
               >
                 Total Volume Sampah 2
@@ -119,10 +119,10 @@ export default function TableTpsTwoLevel({
             <tr className="border-b border-gray-400">
               {headers.map((h) => (
                 <Fragment key={h}>
-                  <th className="sticky top-10 z-40 bg-white p-2 text-center">
+                  <th className="sticky top-10 z-10 bg-white p-2 text-center">
                     Jumlah
                   </th>
-                  <th className="sticky top-10 z-40 bg-white p-2 text-center">
+                  <th className="sticky top-10 z-10 bg-white p-2 text-center">
                     Volume
                   </th>
                 </Fragment>
@@ -171,31 +171,31 @@ export default function TableTpsTwoLevel({
 
           <tfoot className="whitespace-nowrap">
             <tr className="border-t border-gray-400 font-semibold">
-              <td className="sticky bottom-0 z-40 bg-white p-2" />
+              <td className="sticky bottom-0 z-10 bg-white p-2" />
 
-              <td className="sticky bottom-0 left-0 z-50 bg-white p-2">
+              <td className="sticky bottom-0 left-0 z-10 bg-white p-2">
                 TOTAL
               </td>
 
-              <td className="sticky bottom-0 z-40 bg-white p-2 text-center">
+              <td className="sticky bottom-0 z-0 bg-white p-2 text-center">
                 {grandTotalTps}
               </td>
 
               {headers.map((h) => (
                 <Fragment key={h}>
-                  <td className="sticky bottom-0 z-40 bg-white p-2 text-center">
+                  <td className="sticky bottom-0 z-0 bg-white p-2 text-center">
                     {totalsByHeader[h]?.jumlah ?? 0}
                   </td>
-                  <td className="sticky bottom-0 z-40 bg-white p-2 text-center">
+                  <td className="sticky bottom-0 z-0 bg-white p-2 text-center">
                     {totalsByHeader[h]?.volume ? `${totalsByHeader[h]?.volume} KG` : 0}
                   </td>
                 </Fragment>
               ))}
 
-              <td className="sticky bottom-0 z-40 bg-white p-2 text-center">
+              <td className="sticky bottom-0 z-0 bg-white p-2 text-center">
                 {grandTotalVolume1}
               </td>
-              <td className="sticky bottom-0 z-40 bg-white p-2 text-center">
+              <td className="sticky bottom-0 z-0 bg-white p-2 text-center">
                 {grandTotalVolume2}
               </td>
             </tr>

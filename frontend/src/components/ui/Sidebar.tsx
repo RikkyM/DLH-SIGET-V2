@@ -27,6 +27,12 @@ const Sidebar = () => {
           Dashboard
         </NavLink>
         <NavLink
+          to="/"
+          className="block flex items-center gap-2 rounded p-2 font-medium whitespace-nowrap text-black transition-all duration-300 outline-none hover:bg-gray-500/20"
+        >
+          Peta
+        </NavLink>
+        <NavLink
           to="/petugas"
           className={({ isActive }) =>
             [
@@ -50,7 +56,7 @@ const Sidebar = () => {
             ].join(" ")
           }
         >
-          Penampungan Sementara
+          TPS
         </NavLink>
         <NavLink
           to="/data-kendaraan"

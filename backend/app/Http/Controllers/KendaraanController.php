@@ -6,6 +6,7 @@ use App\Models\DataKendaraan;
 use App\Models\TitikSampah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 
 class KendaraanController extends Controller
 {
@@ -36,6 +37,16 @@ class KendaraanController extends Controller
                 ->where('latitude', '!=', '')
                 ->where('longitude', '!=', '')])
             ->select('id', 'no_plat', 'lambung_baru')
+            ->when(!Auth::user(), function ($data) {
+                $data->whereHas('titikSampah.jenisTitikSampah', function ($d) {
+                    $d->whereNotIn('nama', ['WR', 'SAMPAH LIAR']);
+                });
+            })
+            ->when(Auth::user() && !in_array(Auth::user()->role, ['superadmin', 'admin']), function ($data) {
+                $data->whereHas('titikSampah.jenisTitikSampah', function ($d) {
+                    $d->whereNotIn('nama', ['WR', 'SAMPAH LIAR']);
+                });
+            })
             ->when(!empty($departmentIds), function ($q) use ($departmentIds) {
                 $q->whereHas('titikSampah', fn($ts) => $ts->whereIn('id_department', $departmentIds));
             })

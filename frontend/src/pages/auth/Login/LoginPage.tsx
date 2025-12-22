@@ -1,21 +1,22 @@
-import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useLoginForm } from "./hooks/useLoginForm";
 import TextField from "./components/TextField";
 import PasswordField from "./components/PasswordField";
 import logo from "@/assets/img/dlh-logo.webp";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { NavLink } from "react-router-dom";
 
 const LoginPage = () => {
+  useDocumentTitle("Login");
   const { data, loading, error, handleChange, handleSubmit } = useLoginForm();
 
-  useEffect(() => {
-    document.title = "Login";
-  }, []);
-
   return (
-    <section className="z-10 flex w-full flex-1 items-center justify-center space-y-3 bg-[#F9FEFF] p-5 shadow">
-      <div className="w-full max-w-lg px-7">
-        <div className="text-left lg:hidden mb-4 font-medium space-y-2">
+    <section className="z-10 flex w-full flex-1 flex-col space-y-3 bg-[#F9FEFF] p-5 shadow">
+      <NavLink to="/" className="w-max flex items-center gap-2 text-left transition-all duration-300 hover:bg-gray-300 px-3 py-1 rounded-sm">
+        <ArrowLeft className="max-w-5"/> <span>Back</span>
+      </NavLink>
+      <div className="mx-auto flex h-full w-full max-w-lg flex-1 flex-col justify-center px-7">
+        <div className="mb-4 space-y-2 text-left font-medium lg:hidden">
           <img src={logo} alt="logo" className="mx-auto w-full max-w-44" />
           <div className="text-center">
             <h2>Sistem Informasi Geografis Petugas dan TPS</h2>
@@ -31,11 +32,7 @@ const LoginPage = () => {
             Masuk ke akun Anda untuk mengakses sistem
           </p>
         </div>
-        {error && (
-          <p className="text-center text-xs text-red-500">
-            {error}
-          </p>
-        )}
+        {error && <p className="text-center text-xs text-red-500">{error}</p>}
         <form onSubmit={handleSubmit} className="w-full space-y-3">
           <TextField
             label="Username"
