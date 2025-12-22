@@ -93,7 +93,14 @@ const Sidebar = () => {
         </NavLink> */}
         <AccordionItem
           title="Master Data"
-          routes={["/master-data/penampungan-sementara"]}
+          routes={[
+            "/master-data/penugasan",
+            "/master-data/unit-kerja",
+            "/master-data/kelurahan",
+            "/master-data/kecamatan",
+            "/master-data/jenis-kendaraan",
+            "/master-data/jenis-titik-sampah",
+          ]}
         >
           <NavLink
             to="/master-data/penugasan"
@@ -109,7 +116,7 @@ const Sidebar = () => {
             Penugasan
           </NavLink>
           <NavLink
-            to="/master-data/penugasan"
+            to="/master-data/unit-kerja"
             className={({ isActive }) =>
               [
                 "block flex items-center gap-2 rounded p-2 font-medium whitespace-nowrap transition-all duration-300 outline-none",
@@ -119,7 +126,7 @@ const Sidebar = () => {
               ].join(" ")
             }
           >
-            Department
+            Unit Kerja
           </NavLink>
           <NavLink
             to="/master-data/kelurahan"
