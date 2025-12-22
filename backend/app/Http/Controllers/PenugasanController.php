@@ -53,4 +53,31 @@ class PenugasanController extends Controller
             'penugasan' => $penugasan
         ]);
     }
+
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+        $perPage = (int) $request->input('per_page', 25);
+        $perPage = max(1, min($perPage, 200));
+
+        $penugasan = Penugasan::query()
+            ->when($search, fn($q) => $q->where('nama', 'like', "%{$search}%"))
+            ->orderBy('nama', 'asc')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return response()->json(
+            [
+                'data' => $penugasan->items(),
+                'meta' => [
+                    'current_page' => $penugasan->currentPage(),
+                    'per_page'     => $penugasan->perPage(),
+                    'last_page'    => $penugasan->lastPage(),
+                    'total'        => $penugasan->total(),
+                    'from'         => $penugasan->firstItem(),
+                    'to'           => $penugasan->lastItem(),
+                ]
+            ]
+        );
+    }
 }

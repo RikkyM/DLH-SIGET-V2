@@ -1,29 +1,75 @@
-import { ChevronDown } from "lucide-react";
-
+import { useDebounce } from "@/hooks/useDebounce";
+import { ChevronDown, FileText, RefreshCw } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useKendaraan } from "./hooks/useKendaraan";
+import Pagination from "@/components/ui/Pagination";
 
 const DataKendaraanPages = () => {
+  const [search, setSearch] = useState("");
+
+  const debouncedSearch = useDebounce(search, 500);
+
+  const {
+    data,
+    meta,
+    loading,
+    error,
+    // fetch,
+    setPage,
+    perPage,
+    setPerPage,
+    resetToFirstPage,
+  } = useKendaraan(debouncedSearch);
+
+  useEffect(() => {
+    resetToFirstPage();
+  }, [debouncedSearch, resetToFirstPage]);
+
+  const tableRows = useMemo(() => {
+    const startIndex = (meta?.from ?? 1) - 1;
+
+    return data?.map((d, index) => (
+      <tr
+        key={d.id ?? index}
+        className="*:border-y *:border-gray-300 *:p-2 hover:*:bg-gray-300"
+      >
+        <td className="w-12 text-center">
+          <div className="w-12">{startIndex + index + 1}</div>
+        </td>
+        <td className="text-center whitespace-nowrap">{d?.no_plat}</td>
+        <td className="text-center">{d?.lambung_baru ?? "-"}</td>
+        <td className="text-center">{d?.no_rangka ?? "-"}</td>
+        <td className="text-center">{d?.no_mesin ?? "-"}</td>
+        <td className="text-center">{d?.no_stnk ?? "-"}</td>
+        <td className="text-left">
+          <div className="w-38">{d?.merk ? d?.merk : "-"}</div>
+        </td>
+        <td className="text-center">{d?.jenis_kendaraan?.nama ?? "-"}</td>
+        <td className="text-center">{d?.uptd ?? "-"}</td>
+        <td className="text-center">{d?.tahun_pembuatan ?? "-"}</td>
+        <td className="text-center">{d?.kapasitas_mesin ?? "-"}</td>
+        <td className="text-center">{d?.berat ?? "-"}</td>
+        <td className="text-center">{d?.warna ?? "-"}</td>
+        <td className="text-center">{d?.jumlah_kontainer ?? "-"}</td>
+        <td className="text-center">{d?.kondisi ?? "-"}</td>
+        <td className="text-center">{d?.nama_sopir ?? "-"}</td>
+        <td className="text-center">{d?.keterangan ?? "-"}</td>
+        <td className="sticky right-0 z-0 bg-white text-center">
+          <button className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200">
+            <FileText className="max-w-5" />
+          </button>
+        </td>
+      </tr>
+    ));
+  }, [data, meta?.from]);
+
   return (
     <section className="flex flex-1 flex-col gap-3 overflow-auto p-3">
       <div className="flex h-full flex-col gap-2 overflow-auto rounded-lg bg-white p-3 shadow">
         <div className="space-y-2">
-          <h4 className="text-xl font-semibold">
-            Data Kendaraan
-          </h4>
+          <h4 className="text-xl font-semibold">Data Kendaraan</h4>
 
           <div className="flex flex-wrap items-center gap-2">
-            <label htmlFor="search" className="inline-block">
-              <input
-                type="search"
-                id="search"
-                // value={search}
-                // onChange={(e) => setSearch(e.target.value)}
-                name="search"
-                placeholder="Search..."
-                autoComplete="off"
-                className="rounded-sm border border-gray-400 px-3 py-2 text-sm focus:ring focus:ring-blue-300 focus:outline-none"
-              />
-            </label>
-
             <div className="flex items-center gap-2 text-sm text-gray-700">
               Show:
               <label
@@ -34,8 +80,8 @@ const DataKendaraanPages = () => {
                   id="per_page"
                   name="per_page"
                   className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
-                //   value={perPage}
-                //   onChange={(e) => setPerPage(Number(e.target.value))}
+                  value={perPage}
+                  onChange={(e) => setPerPage(Number(e.target.value))}
                 >
                   {[10, 25, 50, 100].map((n) => (
                     <option key={n} value={n}>
@@ -46,6 +92,19 @@ const DataKendaraanPages = () => {
                 <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
               </label>
             </div>
+
+            <label htmlFor="search" className="inline-block">
+              <input
+                type="search"
+                id="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                name="search"
+                placeholder="Search..."
+                autoComplete="off"
+                className="rounded-sm border border-gray-400 px-3 py-2 text-sm focus:ring focus:ring-blue-300 focus:outline-none"
+              />
+            </label>
 
             {/* <div className="flex items-center gap-2 text-sm text-gray-700">
               Filter:
@@ -118,8 +177,56 @@ const DataKendaraanPages = () => {
             </div> */}
           </div>
 
-          {/* {error ? <p className="text-sm text-red-600">{error}</p> : null} */}
+          {error ? <p className="text-sm text-red-600">{error}</p> : null}
         </div>
+
+        <div className="h-full w-full flex-1 touch-pan-x touch-pan-y overflow-auto">
+          {loading ? (
+            <div className="grid h-full w-full place-items-center">
+              <div className="flex items-center gap-2">
+                <RefreshCw className="animate-spin" />
+                <div>Memuat data</div>
+              </div>
+            </div>
+          ) : data.length === 0 ? (
+            <div className="grid h-full w-full place-items-center">
+              Data tidak ditemukan
+            </div>
+          ) : (
+            <>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="*:sticky *:top-0 *:bg-white *:p-2">
+                    <th className="w-12">
+                      <div className="w-12">#</div>
+                    </th>
+                    <th className="text-left whitespace-nowrap">No. TNKB</th>
+                    <th className="text-left whitespace-nowrap">No. Lambung</th>
+                    <th className="text-left whitespace-nowrap">No. Rangka</th>
+                    <th className="text-center whitespace-nowrap">No. Mesin</th>
+                    <th className="text-center whitespace-nowrap">No. STNK</th>
+                    <th className="text-left">Merk</th>
+                    <th className="text-center">Jenis Kendaraan</th>
+                    <th className="text-center">Wilayah UPTD</th>
+                    <th className="text-left">Tahun</th>
+                    <th className="text-center">Kapasitas Mesin</th>
+                    <th className="text-center">Berat</th>
+                    <th className="text-center">Warna</th>
+                    <th className="text-left">Jumlah Kontainer</th>
+                    <th className="text-left">Kondisi</th>
+                    <th className="text-center">Nama Sopir</th>
+                    <th className="text-left">Keterangan</th>
+                    <th className="sticky top-0 right-0 z-10 text-center">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>{tableRows}</tbody>
+              </table>
+            </>
+          )}
+        </div>
+        <Pagination meta={meta} onPageChange={setPage} />
       </div>
     </section>
   );

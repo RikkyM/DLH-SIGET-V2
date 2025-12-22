@@ -51,8 +51,36 @@ class DepartmentController extends Controller
             ->get()
             ->values();
 
-            return response()->json([
-                'departments' => $departments
-            ]);
+        return response()->json([
+            'departments' => $departments
+        ]);
+    }
+
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+        $perPage = (int) $request->input('per_page', 25);
+        $perPage = max(1, min($perPage, 200));
+
+        $unitKerja = Department::query()
+            ->whereNotIn('nama', ['NON AKTIF', 'Our Company'])
+            ->when($search, fn($q) => $q->where('nama', 'like', "%{$search}%"))
+            ->orderBy('nama', 'asc')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return response()->json(
+            [
+                'data' => $unitKerja->items(),
+                'meta' => [
+                    'current_page' => $unitKerja->currentPage(),
+                    'per_page'     => $unitKerja->perPage(),
+                    'last_page'    => $unitKerja->lastPage(),
+                    'total'        => $unitKerja->total(),
+                    'from'         => $unitKerja->firstItem(),
+                    'to'           => $unitKerja->lastItem(),
+                ]
+            ]
+        );
     }
 }

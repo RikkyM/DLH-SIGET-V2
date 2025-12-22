@@ -10,7 +10,13 @@ export type Departments = {
 
 export type Penugasan = {
     id: number;
+    icon: string;
     nama: string;
+}
+
+export type UnitKerja = {
+  id: number;
+  nama: string;
 }
 
 export type JenisKendaraan = {

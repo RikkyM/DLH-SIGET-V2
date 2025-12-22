@@ -47,6 +47,9 @@ Route::middleware('web')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index']);
         Route::get('/petugas', [PetugasController::class, 'index']);
         Route::get('/penampungan-sementara', [JTSController::class, 'index']);
+        Route::get('/data-kendaraan', [KendaraanController::class, 'index']);
+        Route::get('/penugasans', [PenugasanController::class, 'index']);
+        Route::get('/unit-kerja', [DepartmentController::class, 'index']);
 
         // Route::put('/petugas/{id}', [PetugasController::class, 'update']);
 

@@ -60,4 +60,32 @@ class KendaraanController extends Controller
             'lambung' => $titikSampah
         ]);
     }
+
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+        $perPage = (int) $request->input('per_page', 25);
+        $perPage = max(1, min($perPage, 200));
+
+        $kendaraan = DataKendaraan::query()
+            ->with('jenisKendaraan')
+            ->when($search, fn($q) => $q->where('no_plat', 'like', "%{$search}%"))
+            ->orderBy('merk', 'asc')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return response()->json(
+            [
+                'data' => $kendaraan->items(),
+                'meta' => [
+                    'current_page' => $kendaraan->currentPage(),
+                    'per_page'     => $kendaraan->perPage(),
+                    'last_page'    => $kendaraan->lastPage(),
+                    'total'        => $kendaraan->total(),
+                    'from'         => $kendaraan->firstItem(),
+                    'to'           => $kendaraan->lastItem(),
+                ]
+            ]
+        );
+    }
 }

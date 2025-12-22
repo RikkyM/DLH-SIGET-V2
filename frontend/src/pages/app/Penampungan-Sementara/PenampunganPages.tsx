@@ -64,7 +64,9 @@ const PenampunganPages = () => {
         </td>
         <td className="text-left">{d?.kendaraan?.nama_sopir ?? "-"}</td>
         <td className="text-left whitespace-nowrap">{d?.armada ?? "-"}</td>
-        <td className="text-center whitespace-nowrap">{d?.no_lambung ?? "-"}</td>
+        <td className="text-center whitespace-nowrap">
+          {d?.no_lambung ?? "-"}
+        </td>
         <td className="text-left">-</td>
         <td className="text-left">{d?.keterangan ?? "-"}</td>
         <td className="text-center">
@@ -88,19 +90,6 @@ const PenampunganPages = () => {
           </h4>
 
           <div className="flex flex-wrap items-center gap-2">
-            <label htmlFor="search" className="inline-block">
-              <input
-                type="search"
-                id="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                name="search"
-                placeholder="Search..."
-                autoComplete="off"
-                className="rounded-sm border border-gray-400 px-3 py-2 text-sm focus:ring focus:ring-blue-300 focus:outline-none"
-              />
-            </label>
-
             <div className="flex items-center gap-2 text-sm text-gray-700">
               Show:
               <label
@@ -123,6 +112,19 @@ const PenampunganPages = () => {
                 <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
               </label>
             </div>
+
+            <label htmlFor="search" className="inline-block">
+              <input
+                type="search"
+                id="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                name="search"
+                placeholder="Search..."
+                autoComplete="off"
+                className="rounded-sm border border-gray-400 px-3 py-2 text-sm focus:ring focus:ring-blue-300 focus:outline-none"
+              />
+            </label>
 
             <div className="flex items-center gap-2 text-sm text-gray-700">
               Filter:
