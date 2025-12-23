@@ -12,4 +12,9 @@ class Kelurahan extends Model
         'id_kecamatan',
         'nama_kelurahan'
     ];
+
+    public function kecamatan()
+    {
+        return $this->belongsTo(Kecamatan::class, 'id_kecamatan');
+    }
 }

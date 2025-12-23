@@ -6,6 +6,8 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\FilterController;
 use App\Http\Controllers\JenisKendaraan\JenisKendaraanController;
 use App\Http\Controllers\JTSController;
+use App\Http\Controllers\Kecamatan\KecamatanController;
+use App\Http\Controllers\Kelurahan\KelurahanController;
 use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\PenugasanController;
 use App\Http\Controllers\Petugas\PetugasController;
@@ -47,9 +49,14 @@ Route::middleware('web')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index']);
         Route::get('/petugas', [PetugasController::class, 'index']);
         Route::get('/penampungan-sementara', [JTSController::class, 'index']);
+        Route::put('/penampungan-sementara/{id}', [JTSController::class, 'updateTps']);
         Route::get('/data-kendaraan', [KendaraanController::class, 'index']);
         Route::get('/penugasans', [PenugasanController::class, 'index']);
         Route::get('/unit-kerja', [DepartmentController::class, 'index']);
+        Route::get('/kelurahan', [KelurahanController::class, 'index']);
+        Route::get('/kecamatan', [KecamatanController::class, 'index']);
+        Route::get('/master-data/jenis-kendaraan', [JenisKendaraanController::class, 'index']);
+        Route::get('/master-data/jenis-titik-sampah', [JTSController::class, 'masterJts']);
 
         // Route::put('/petugas/{id}', [PetugasController::class, 'update']);
 
@@ -57,5 +64,8 @@ Route::middleware('web')->group(function () {
         Route::get('/penugasan', [PenugasanController::class, 'getPenugasan']);
         Route::get('/jts', [JTSController::class, 'getJts']);
         Route::get('/jenis-kendaraan', [JenisKendaraanController::class, 'getJenisKendaraan']);
+        Route::get('/data-kendaraan/tahun-pembuatan', [KendaraanController::class, 'tahunPembuatan']);
+        Route::get('/tps/tnkb', [JTSController::class, 'tnkb']);
+        Route::get('/tps/lambung', [JTSController::class, 'lambung']);
     });
 });

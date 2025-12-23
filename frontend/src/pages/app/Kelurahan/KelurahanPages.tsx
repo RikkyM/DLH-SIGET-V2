@@ -1,13 +1,13 @@
 import { useDebounce } from "@/hooks/useDebounce";
-import { useEffect, useMemo, useState } from "react";
-import { usePenugasanPages } from "./hooks/usePenugasanPages";
-import { ChevronDown, FileText, RefreshCw } from "lucide-react";
-import Pagination from "@/components/ui/Pagination";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { ChevronDown, RefreshCw } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { useKelurahan } from "./hooks/useKelurahan";
+import Pagination from "@/components/ui/Pagination";
 
-const PenugasanPages = () => {
-  useDocumentTitle("Penugasan");
-  
+const KelurahanPages = () => {
+  useDocumentTitle("Kelurahan");
+
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
 
@@ -21,7 +21,7 @@ const PenugasanPages = () => {
     perPage,
     setPerPage,
     resetToFirstPage,
-  } = usePenugasanPages(debouncedSearch);
+  } = useKelurahan(debouncedSearch);
 
   useEffect(() => {
     resetToFirstPage();
@@ -38,13 +38,13 @@ const PenugasanPages = () => {
         <td className="w-12 text-center">
           <div className="w-12">{startIndex + index + 1}</div>
         </td>
-        <td className="w-25">-</td>
-        <td>{d?.nama ?? "-"}</td>
-        <td className="sticky right-0 z-0 bg-white text-center">
+        <td>{d?.kecamatan?.nama_kecamatan ?? "-"}</td>
+        <td>{d?.nama_kelurahan ?? "-"}</td>
+        {/* <td className="sticky right-0 z-0 bg-white text-center">
           <button className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200">
             <FileText className="max-w-5" />
           </button>
-        </td>
+        </td> */}
       </tr>
     ));
   }, [data, meta?.from]);
@@ -53,7 +53,7 @@ const PenugasanPages = () => {
     <section className="flex flex-1 flex-col gap-3 overflow-auto p-3">
       <div className="flex h-full flex-col gap-2 overflow-auto rounded-lg bg-white p-3 shadow">
         <div className="space-y-2">
-          <h4 className="text-xl font-semibold">Penugasan</h4>
+          <h4 className="text-xl font-semibold">Kelurahan</h4>
 
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-2 text-sm text-gray-700">
@@ -116,60 +116,7 @@ const PenugasanPages = () => {
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
               </label>
-              <label
-                htmlFor="id_jts"
-                className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
-              >
-                <select
-                  id="id_jts"
-                  name="id_jts"
-                  className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
-                  value={jts}
-                  onChange={(e) => {
-                    setJts(Number(e.target.value));
-                  }}
-                >
-                  <option value="">Pilih Jenis Titik Sampah</option>
-                  {dataJts.map((dept, index) => (
-                    <option key={dept.id ?? index} value={dept.id}>
-                      {dept.nama}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
-              </label>
-              <label
-                htmlFor="id_jk"
-                className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
-              >
-                <select
-                  id="id_jk"
-                  name="id_jk"
-                  className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
-                  value={jenisKendaraan}
-                  onChange={(e) => {
-                    setJenisKendaraan(Number(e.target.value));
-                  }}
-                >
-                  <option value="">Pilih Jenis Kendaraan</option>
-                  {dataJk.map((dept, index) => (
-                    <option key={dept.id ?? index} value={dept.id}>
-                      {dept.nama}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
-              </label>
             </div> */}
-
-            {/* <button
-              onClick={() => fetch()}
-              className="inline-flex items-center gap-2 rounded border px-3 py-2 text-sm"
-              type="button"
-            >
-              <RefreshCw className={loading ? "animate-spin" : ""} />
-              Refresh
-            </button> */}
           </div>
 
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
@@ -194,9 +141,9 @@ const PenugasanPages = () => {
                     <th className="w-12">
                       <div className="w-12">#</div>
                     </th>
-                    <th className="text-left">Icon</th>
-                    <th className="text-left">Nama Penugasan</th>
-                    <th className="sticky top-0 right-0 z-10">Action</th>
+                    <th className="text-left">Nama Kecamatan</th>
+                    <th className="text-left">Nama Kelurahan</th>
+                    {/* <th className="sticky top-0 right-0 z-10">Action</th> */}
                   </tr>
                 </thead>
                 <tbody>{tableRows}</tbody>
@@ -210,4 +157,4 @@ const PenugasanPages = () => {
   );
 };
 
-export default PenugasanPages;
+export default KelurahanPages;

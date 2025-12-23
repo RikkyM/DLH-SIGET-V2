@@ -11,4 +11,9 @@ class Kecamatan extends Model
     protected $fillable = [
         'nama_kecamatan'
     ];
+
+    public function kelurahan()
+    {
+        return $this->hasMany(Kelurahan::class, 'id_kecamatan');
+    }
 }

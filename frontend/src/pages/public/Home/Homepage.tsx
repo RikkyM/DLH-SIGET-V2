@@ -8,6 +8,7 @@ import MultiSelectDropdown, {
 } from "@/components/ui/MultiSelectDropdown";
 import logo from "@/assets/img/dlh-logo.webp";
 import { iconPetugas, iconTitikSampah } from "./icon";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 type FiltersDepartmentsResponse = {
   departments: MultiSelectOption[];
@@ -104,6 +105,8 @@ const getMapMarkers = async (params: {
 };
 
 const Homepage = () => {
+  useDocumentTitle('SIGET DLH PALEMBANG')
+
   const center: LatLngExpression = [-2.9761, 104.7754];
 
   const [optDepartment, setOptDepartment] = useState<MultiSelectOption[]>([]);

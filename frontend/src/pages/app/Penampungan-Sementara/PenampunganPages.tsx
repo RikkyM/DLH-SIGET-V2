@@ -1,4 +1,4 @@
-import { ChevronDown, Pencil, RefreshCw } from "lucide-react";
+import { ChevronDown, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { usePenampungan } from "./hooks/usePenampungan";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -6,29 +6,52 @@ import { useDepartments } from "@/hooks/useDepartments";
 import { useJts } from "@/hooks/useJts";
 import { useJenisKendaraan } from "@/hooks/useJenisKendaraan";
 import Pagination from "@/components/ui/Pagination";
+import { useTnkbTps } from "@/hooks/useTnkbTps";
+import { useLambungTps } from "@/hooks/useLambungTps";
+import ActionButton from "./components/ActionButton";
+import Dialog from "@/components/ui/Dialog";
+import { useDialog } from "@/hooks/useDialog";
+import type { PenampunganRes } from "./__types";
+import FormEdit from "./components/FormEdit";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 const PenampunganPages = () => {
+  useDocumentTitle('TPS')
+
+  const { mode } = useDialog<PenampunganRes>();
+
   const [search, setSearch] = useState("");
   const [unitKerja, setUnitKerja] = useState<number | undefined>();
   const [jts, setJts] = useState<number | undefined>();
   const [jenisKendaraan, setJenisKendaraan] = useState<number | undefined>();
+  const [tnkb, setTnkb] = useState("");
+  const [lambung, setLambung] = useState("");
   const debouncedSearch = useDebounce(search, 500);
 
   const { departments } = useDepartments();
   const { jts: dataJts } = useJts();
   const { jenisKendaraan: dataJk } = useJenisKendaraan();
+  const { tnkbTps } = useTnkbTps();
+  const { lambungTps } = useLambungTps();
 
   const {
     data,
     meta,
     loading,
     error,
-    // fetch,
+    fetch,
     setPage,
     perPage,
     setPerPage,
     resetToFirstPage,
-  } = usePenampungan(debouncedSearch, unitKerja, jts, jenisKendaraan);
+  } = usePenampungan(
+    debouncedSearch,
+    unitKerja,
+    jts,
+    jenisKendaraan,
+    tnkb,
+    lambung,
+  );
 
   useEffect(() => {
     resetToFirstPage();
@@ -46,8 +69,12 @@ const PenampunganPages = () => {
           <div className="w-12">{startIndex + index + 1}</div>
         </td>
         <td>{d?.jenis_titik_sampah?.nama ?? "-"}</td>
-        <td>{d.nama}</td>
-        <td>{d.nama_jalan}</td>
+        <td>
+          <div className="w-30">{d.nama}</div>
+        </td>
+        <td>
+          <div className="w-30">{d.nama_jalan}</div>
+        </td>
         <td className="capitalize">
           {d?.kelurahan ? d?.kelurahan.toLowerCase() : "-"}
         </td>
@@ -69,13 +96,14 @@ const PenampunganPages = () => {
         </td>
         <td className="text-left">-</td>
         <td className="text-left">{d?.keterangan ?? "-"}</td>
-        <td className="text-center">
-          <button
+        <td className="sticky right-0 z-0 bg-white text-center">
+          {/* <button
             type="button"
             className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200"
           >
             <Pencil className="max-w-5" />
-          </button>
+          </button> */}
+          <ActionButton data={d} />
         </td>
       </tr>
     ));
@@ -186,9 +214,53 @@ const PenampunganPages = () => {
                   }}
                 >
                   <option value="">Pilih Jenis Kendaraan</option>
-                  {dataJk.map((dept, index) => (
-                    <option key={dept.id ?? index} value={dept.id}>
-                      {dept.nama}
+                  {dataJk.map((data, index) => (
+                    <option key={data.id ?? index} value={data.id}>
+                      {data.nama}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
+              </label>
+              <label
+                htmlFor="no_tnkb"
+                className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
+              >
+                <select
+                  id="no_tnkb"
+                  name="no_tnkb"
+                  className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
+                  value={tnkb}
+                  onChange={(e) => {
+                    setTnkb(e.target.value);
+                  }}
+                >
+                  <option value="">Pilih No Tnkb</option>
+                  {tnkbTps.map((data, index) => (
+                    <option key={data ?? index} value={data}>
+                      {data}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
+              </label>
+              <label
+                htmlFor="no_lambung"
+                className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
+              >
+                <select
+                  id="no_lambung"
+                  name="no_lambung"
+                  className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
+                  value={lambung}
+                  onChange={(e) => {
+                    setLambung(e.target.value);
+                  }}
+                >
+                  <option value="">Pilih No Lambung</option>
+                  {lambungTps.map((data, index) => (
+                    <option key={data ?? index} value={data}>
+                      {data}
                     </option>
                   ))}
                 </select>
@@ -255,6 +327,13 @@ const PenampunganPages = () => {
         </div>
         <Pagination meta={meta} onPageChange={setPage} />
       </div>
+      <Dialog>
+        {mode == "edit" ? (
+          <FormEdit refetch={fetch} />
+        ) : (
+          <>Detail Penampungan</>
+        )}
+      </Dialog>
     </section>
   );
 };

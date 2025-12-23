@@ -6,16 +6,20 @@ export const usePenampungan = (
   search: string,
   unit_kerja?: number,
   jts?: number,
-  jenis_kendaraan?: number
+  jenis_kendaraan?: number,
+  tnkb?: string,
+  lambung?: string,
 ) => {
   const params = useMemo(
     () => ({
       search: search || undefined,
       unit_kerja,
       jenis_titik_sampah: jts,
-      jenis_kendaraan
+      jenis_kendaraan,
+      tnkb: tnkb || undefined,
+      lambung: lambung || undefined,
     }),
-    [search, unit_kerja, jts, jenis_kendaraan],
+    [search, unit_kerja, jts, jenis_kendaraan, tnkb, lambung],
   );
   return usePaginatedQuery<PenampunganRes>({
     url: "/api/penampungan-sementara",

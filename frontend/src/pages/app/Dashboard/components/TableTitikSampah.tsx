@@ -61,7 +61,7 @@ export default function TableTpsTwoLevel({
   );
 
   return (
-    <div className="h-full rounded-lg border border-gray-300 bg-white p-3 shadow">
+    <div className="h-full rounded-lg border border-gray-300 bg-white p-3 shadow touch-pan-x touch-pan-y">
       <div className="space-y-1">
         <h2 className="font-semibold">{title}</h2>
         <p className="text-sm text-gray-400">{subtitle}</p>
@@ -86,7 +86,7 @@ export default function TableTpsTwoLevel({
               </th>
 
               <th
-                className="sticky top-0 z-10 bg-white p-2 text-center"
+                className="sticky top-0 z-0 bg-white p-2 text-center"
                 rowSpan={2}
               >
                 Total TPS
@@ -95,7 +95,7 @@ export default function TableTpsTwoLevel({
               {headers.map((h) => (
                 <th
                   key={h}
-                  className="sticky top-0 z-10 bg-white p-2 text-center"
+                  className="sticky top-0 z-0 bg-white p-2 text-center"
                   colSpan={2}
                 >
                   {h}
@@ -103,13 +103,13 @@ export default function TableTpsTwoLevel({
               ))}
 
               <th
-                className="sticky top-0 z-10 bg-white p-2 text-center"
+                className="sticky top-0 z-0 bg-white p-2 text-center"
                 rowSpan={2}
               >
                 Total Volume Sampah 1
               </th>
               <th
-                className="sticky top-0 z-10 bg-white p-2 text-center"
+                className="sticky top-0 z-0 bg-white p-2 text-center"
                 rowSpan={2}
               >
                 Total Volume Sampah 2
@@ -119,10 +119,10 @@ export default function TableTpsTwoLevel({
             <tr className="border-b border-gray-400">
               {headers.map((h) => (
                 <Fragment key={h}>
-                  <th className="sticky top-10 z-10 bg-white p-2 text-center">
+                  <th className="sticky top-10 z-0 bg-white p-2 text-center">
                     Jumlah
                   </th>
-                  <th className="sticky top-10 z-10 bg-white p-2 text-center">
+                  <th className="sticky top-10 z-0 bg-white p-2 text-center">
                     Volume
                   </th>
                 </Fragment>

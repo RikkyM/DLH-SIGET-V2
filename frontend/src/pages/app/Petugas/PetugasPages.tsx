@@ -8,8 +8,10 @@ import { usePetugas } from "./hooks/usePetugas";
 import { ChevronDown, RefreshCw } from "lucide-react";
 import { useDepartments } from "@/hooks/useDepartments";
 import { usePenugasan } from "@/hooks/usePenugasan";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 const PetugasPages = () => {
+  useDocumentTitle('Petugas')
   const [search, setSearch] = useState("");
   const [unitKerja, setUnitKerja] = useState<number | undefined>();
   const [penugasan, setPenugasan] = useState<number | undefined>();

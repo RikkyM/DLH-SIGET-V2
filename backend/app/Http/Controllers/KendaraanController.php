@@ -61,15 +61,38 @@ class KendaraanController extends Controller
         ]);
     }
 
+    public function tahunPembuatan()
+    {
+        $years = DataKendaraan::query()
+            ->whereNotNull('tahun_pembuatan')
+            ->where('tahun_pembuatan', '!=', '')
+            ->select('tahun_pembuatan')
+            ->distinct()
+            ->orderBy('tahun_pembuatan', 'desc')
+            ->pluck('tahun_pembuatan');
+
+        return response()->json([
+            'years' => $years
+        ]);
+    }
+
     public function index(Request $request)
     {
         $search = $request->input('search');
         $perPage = (int) $request->input('per_page', 25);
+        $department = (int) $request->input('unit_kerja');
+        $jenisKendaraan = (int) $request->input('jenis_kendaraan');
+        $tahunPembuatan = (int) $request->input('tahun');
         $perPage = max(1, min($perPage, 200));
 
         $kendaraan = DataKendaraan::query()
             ->with('jenisKendaraan')
-            ->when($search, fn($q) => $q->where('no_plat', 'like', "%{$search}%"))
+            ->when($search, function ($q) use ($search) {
+                $q->whereAny(['no_plat', 'nama_sopir', 'lambung_baru', 'no_rangka', 'no_mesin', 'no_stnk'],  'like', "%{$search}%");
+            })
+            ->when(!empty($department), fn($data) => $data->where('id_department', $department))
+            ->when(!empty($jenisKendaraan), fn($data) => $data->where('id_jenis', $jenisKendaraan))
+            ->when(!empty($tahunPembuatan), fn($data) => $data->where('tahun_pembuatan', $tahunPembuatan))
             ->orderBy('merk', 'asc')
             ->paginate($perPage)
             ->withQueryString();

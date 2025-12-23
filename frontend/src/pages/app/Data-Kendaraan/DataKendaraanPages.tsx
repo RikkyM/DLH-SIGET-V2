@@ -1,12 +1,20 @@
 import { useDebounce } from "@/hooks/useDebounce";
-import { ChevronDown, FileText, RefreshCw } from "lucide-react";
+import { ChevronDown, Pencil, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useKendaraan } from "./hooks/useKendaraan";
 import Pagination from "@/components/ui/Pagination";
+import { useDepartments } from "@/hooks/useDepartments";
+import { useJenisKendaraan } from "@/hooks/useJenisKendaraan";
+import { useTahunPembuatan } from "@/hooks/useTahunPembuatan";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 const DataKendaraanPages = () => {
+  useDocumentTitle("Data Kendaraan");
+  
   const [search, setSearch] = useState("");
-
+  const [unitKerja, setUnitKerja] = useState<number | undefined>();
+  const [jenisKendaraan, setJenisKendaraan] = useState<number | undefined>();
+  const [tahun, setTahun] = useState<number | undefined>();
   const debouncedSearch = useDebounce(search, 500);
 
   const {
@@ -19,11 +27,15 @@ const DataKendaraanPages = () => {
     perPage,
     setPerPage,
     resetToFirstPage,
-  } = useKendaraan(debouncedSearch);
+  } = useKendaraan(debouncedSearch, unitKerja, jenisKendaraan, tahun);
 
   useEffect(() => {
     resetToFirstPage();
   }, [debouncedSearch, resetToFirstPage]);
+
+  const { departments } = useDepartments();
+  const { jenisKendaraan: dataJk } = useJenisKendaraan();
+  const { tahunPembuatan: dataTahun } = useTahunPembuatan();
 
   const tableRows = useMemo(() => {
     const startIndex = (meta?.from ?? 1) - 1;
@@ -56,7 +68,7 @@ const DataKendaraanPages = () => {
         <td className="text-center">{d?.keterangan ?? "-"}</td>
         <td className="sticky right-0 z-0 bg-white text-center">
           <button className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200">
-            <FileText className="max-w-5" />
+            <Pencil className="max-w-5" />
           </button>
         </td>
       </tr>
@@ -106,7 +118,7 @@ const DataKendaraanPages = () => {
               />
             </label>
 
-            {/* <div className="flex items-center gap-2 text-sm text-gray-700">
+            <div className="flex items-center gap-2 text-sm text-gray-700">
               Filter:
               <label
                 htmlFor="unit_kerja"
@@ -123,28 +135,6 @@ const DataKendaraanPages = () => {
                 >
                   <option value="">Pilih Unit Kerja</option>
                   {departments.map((dept, index) => (
-                    <option key={dept.id ?? index} value={dept.id}>
-                      {dept.nama}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
-              </label>
-              <label
-                htmlFor="id_jts"
-                className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
-              >
-                <select
-                  id="id_jts"
-                  name="id_jts"
-                  className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
-                  value={jts}
-                  onChange={(e) => {
-                    setJts(Number(e.target.value));
-                  }}
-                >
-                  <option value="">Pilih Jenis Titik Sampah</option>
-                  {dataJts.map((dept, index) => (
                     <option key={dept.id ?? index} value={dept.id}>
                       {dept.nama}
                     </option>
@@ -174,7 +164,29 @@ const DataKendaraanPages = () => {
                 </select>
                 <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
               </label>
-            </div> */}
+              <label
+                htmlFor="tahun_pembuatan"
+                className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
+              >
+                <select
+                  id="tahun_pembuatan"
+                  name="tahun_pembuatan"
+                  className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
+                  value={tahun}
+                  onChange={(e) => {
+                    setTahun(Number(e.target.value));
+                  }}
+                >
+                  <option value="">Pilih Tahun Pembuatan</option>
+                  {dataTahun.map((dept, index) => (
+                    <option key={dept ?? index} value={dept}>
+                      {dept}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
+              </label>
+            </div>
           </div>
 
           {error ? <p className="text-sm text-red-600">{error}</p> : null}

@@ -11,6 +11,10 @@ import PenampunganPages from "@/pages/app/Penampungan-Sementara/PenampunganPages
 import DataKendaraanPages from "@/pages/app/Data-Kendaraan/DataKendaraanPages";
 import PenugasanPages from "@/pages/app/Penugasan/PenugasanPages";
 import UnitKerjaPages from "@/pages/app/Unit-Kerja/UnitKerjaPages";
+import KelurahanPages from "@/pages/app/Kelurahan/KelurahanPages";
+import KecamatanPages from "@/pages/app/Kecamatan/KecamatanPages";
+import JenisKendaraanPages from "@/pages/app/Jenis-Kendaraan/JenisKendaraanPages";
+import JTSPages from "@/pages/app/Jenis-Titik-Sampah/JTSPages";
 
 export const AppRoutes = () => {
   return (
@@ -34,10 +38,10 @@ export const AppRoutes = () => {
         <Route path="/master-data">
           <Route path="penugasan" element={<PenugasanPages/>}/>
           <Route path="unit-kerja" element={<UnitKerjaPages/>}/>
-          <Route path="kelurahan" element={<>kelurahan</>}/>
-          <Route path="kecamatan" element={<>kecamatan</>}/>
-          <Route path="jenis-kendaraan" element={<>jenis kendaraan</>}/>
-          <Route path="jenis-titik-sampah" element={<>jenis titik sampah</>}/>
+          <Route path="kelurahan" element={<KelurahanPages/>}/>
+          <Route path="kecamatan" element={<KecamatanPages/>}/>
+          <Route path="jenis-kendaraan" element={<JenisKendaraanPages/>}/>
+          <Route path="jenis-titik-sampah" element={<JTSPages/>}/>
         </Route>
       </Route>
     </Routes>

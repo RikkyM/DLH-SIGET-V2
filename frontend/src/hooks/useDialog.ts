@@ -1,4 +1,5 @@
 import { DialogContext } from "@/contexts/DialogContext";
+import type { DialogMode } from "@/providers/DialogProvider";
 import { useContext } from "react";
 
 export const useDialog = <T>() => {
@@ -10,7 +11,8 @@ export const useDialog = <T>() => {
   return {
     isOpen: ctx.isOpen,
     data: ctx.data as T | null,
-    openDialog: (data?: T) => ctx.openDialog(data),
+    mode: ctx.mode,
+    openDialog: (data?: T, mode?: DialogMode) => ctx.openDialog(data, mode),
     closeDialog: ctx.closeDialog,
   };
 };

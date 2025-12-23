@@ -1,9 +1,11 @@
+import type { DialogMode } from "@/providers/DialogProvider";
 import { createContext } from "react";
 
 type DialogContextType = {
   isOpen: boolean;
   data: unknown;
-  openDialog: (data?: unknown) => void;
+  mode: DialogMode | undefined,
+  openDialog: (data?: unknown, mode?: DialogMode) => void;
   closeDialog: () => void;
 };
 
