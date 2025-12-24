@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Penugasan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Laravel\Facades\Image;
 
 class PenugasanController extends Controller
 {
@@ -79,5 +82,46 @@ class PenugasanController extends Controller
                 ]
             ]
         );
+    }
+
+    public function updatePenugasan(Request $request, $id)
+    {
+        $penugasan = Penugasan::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama' => 'sometimes|string|max:50',
+            'icon' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048|'
+        ]);
+
+        if ($request->filled('nama')) {
+            $penugasan->nama = $validated['nama'];
+        }
+
+        if ($request->hasFile('icon')) {
+            $file = $request->file('icon');
+
+            if ($penugasan->icon) {
+                Storage::disk('local')->delete($penugasan->icon);
+            }
+
+            $maxSize = 96;
+
+            $img = Image::read($file->getRealPath())
+                ->cover($maxSize, $maxSize);
+
+            $fileName = Str::uuid()->toString() . '.webp';
+            $path = "penugasan/{$fileName}";
+
+            Storage::disk('local')->put($path, (string) $img->toWebp(80));
+
+            $penugasan->icon = $path;
+        }
+
+        $penugasan->save();
+
+        return response()->json([
+            'message' => 'Penugasan berhasil diupdate.',
+            'data' => $penugasan,
+        ]);
     }
 }

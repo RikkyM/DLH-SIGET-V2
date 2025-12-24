@@ -9,6 +9,7 @@ class Penugasan extends Model
     protected $table = 'penugasan';
 
     protected $fillable = [
+        'icon',
         'nama'
     ];
 

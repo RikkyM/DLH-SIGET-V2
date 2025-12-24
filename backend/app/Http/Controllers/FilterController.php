@@ -145,7 +145,10 @@ class FilterController extends Controller
                 'kelurahan' => strtolower($t->kelurahan),
                 'jenis' => $t->jenisTitikSampah?->nama,
                 'jenis_kendaraan' => $t->jenisKendaraan?->nama,
-                'lambung' => $t->no_lambung ?? "-"
+                'lambung' => $t->no_lambung ?? "-",
+                'icon' => $t->jenisTitikSampah?->icon
+                    ? url("/api/jenis-titik-sampah/{$t->id_jts}/icon")
+                    : null,
             ])
             : collect();
 
@@ -176,12 +179,16 @@ class FilterController extends Controller
                 'kelurahan' => $p->nama_kelurahan ? strtolower($p->nama_kelurahan) : "-",
                 'jenis' => null,
                 'jenis_kendaraan' => $p->jenisKendaraan?->nama,
+                'icon' => $p->penugasan->icon
+                    ? url("/api/penugasan/{$p->id_penugasan}/icon") . '?v=' . urlencode($p->penugasan->updated_at ?? "")
+                    : null
             ])
             : collect();
 
+        // dd($petugas);
+
         return response()->json([
             'data' => $titikSampah->concat($petugas)->values(),
-            // bantu debug kalau perlu:
             'debug' => compact('departmentIds', 'penugasanIds', 'penampunganIds', 'lambungIds'),
         ]);
     }

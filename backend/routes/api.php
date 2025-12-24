@@ -11,6 +11,7 @@ use App\Http\Controllers\Kelurahan\KelurahanController;
 use App\Http\Controllers\KendaraanController;
 use App\Http\Controllers\PenugasanController;
 use App\Http\Controllers\Petugas\PetugasController;
+use App\Http\Controllers\PrivateController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -52,6 +53,7 @@ Route::middleware('web')->group(function () {
         Route::put('/penampungan-sementara/{id}', [JTSController::class, 'updateTps']);
         Route::get('/data-kendaraan', [KendaraanController::class, 'index']);
         Route::get('/penugasans', [PenugasanController::class, 'index']);
+        Route::put('/penugasan/{id}', [PenugasanController::class, 'updatePenugasan']);
         Route::get('/unit-kerja', [DepartmentController::class, 'index']);
         Route::get('/kelurahan', [KelurahanController::class, 'index']);
         Route::get('/kecamatan', [KecamatanController::class, 'index']);
@@ -70,5 +72,9 @@ Route::middleware('web')->group(function () {
         Route::get('/kelurahan-filter', [KelurahanController::class, 'filterKelurahan']);
         Route::get('/tps/tnkb', [JTSController::class, 'tnkb']);
         Route::get('/tps/lambung', [JTSController::class, 'lambung']);
+
+        //icon
+        Route::get('/penugasan/{id}/icon', [PrivateController::class, 'penugasanIcon']);
+        Route::get('/jenis-titik-sampah/{id}/icon', [PrivateController::class, 'JTSIcon']);
     });
 });
