@@ -59,6 +59,7 @@ Route::middleware('web')->group(function () {
         Route::get('/kecamatan', [KecamatanController::class, 'index']);
         Route::get('/master-data/jenis-kendaraan', [JenisKendaraanController::class, 'index']);
         Route::get('/master-data/jenis-titik-sampah', [JTSController::class, 'masterJts']);
+        Route::put('/master-data/jenis-titik-sampah/{id}', [JTSController::class, 'updateMasterJts']);
 
         // Route::put('/petugas/{id}', [PetugasController::class, 'update']);
 

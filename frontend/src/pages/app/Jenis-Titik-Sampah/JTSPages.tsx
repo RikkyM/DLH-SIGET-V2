@@ -1,12 +1,17 @@
 import Pagination from "@/components/ui/Pagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { ChevronDown, FileText, RefreshCw } from "lucide-react";
+import { ChevronDown, Pencil, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useJenisTitikSampah } from "./hooks/useJenisTitikSampah";
+import Dialog from "@/components/ui/Dialog";
+import { useDialog } from "@/hooks/useDialog";
+import FormEdit from "./components/FormEdit";
 
 const JTSPages = () => {
   useDocumentTitle("Jenis Titik Sampah");
+
+  const { mode, openDialog } = useDialog();
 
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
@@ -16,7 +21,7 @@ const JTSPages = () => {
     meta,
     loading,
     error,
-    // fetch,
+    fetch,
     setPage,
     perPage,
     setPerPage,
@@ -38,15 +43,39 @@ const JTSPages = () => {
         <td className="w-12 text-center">
           <div className="w-12">{startIndex + index + 1}</div>
         </td>
+        <td className="w-25 text-center">
+          {d.icon ? (
+            <>
+              <a
+                href={`${import.meta.env.VITE_API_BASE}/api/jenis-titik-sampah/${d.id}/icon?v=${encodeURIComponent(d.updated_at ?? "")}`}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-block rounded p-2 transition-colors duration-300 hover:bg-gray-200"
+              >
+                <img
+                  src={`${import.meta.env.VITE_API_BASE}/api/jenis-titik-sampah/${d.id}/icon?v=${encodeURIComponent(d.updated_at ?? "")}`}
+                  alt="Icon Penugasan"
+                  className="size-13 rounded object-cover"
+                />
+              </a>
+            </>
+          ) : (
+            "-"
+          )}
+        </td>
         <td>{d?.nama ?? "-"}</td>
         <td className="sticky right-0 z-0 bg-white text-center">
-          <button className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200">
-            <FileText className="max-w-5" />
+          <button
+            type="button"
+            onClick={() => openDialog(d, "edit")}
+            className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200 focus:outline-none"
+          >
+            <Pencil className="max-w-5" />
           </button>
         </td>
       </tr>
     ));
-  }, [data, meta?.from]);
+  }, [data, meta?.from, openDialog]);
 
   return (
     <section className="flex flex-1 flex-col gap-3 overflow-auto p-3">
@@ -114,6 +143,7 @@ const JTSPages = () => {
                     <th className="w-12">
                       <div className="w-12">#</div>
                     </th>
+                    <th className="text-center">Icon</th>
                     <th className="text-left">Nama Jenis Titik Sampah</th>
                     {/* <th className="text-left">Nama Kelurahan</th> */}
                     <th className="sticky top-0 right-0 z-10">Action</th>
@@ -126,6 +156,7 @@ const JTSPages = () => {
         </div>
         <Pagination meta={meta} onPageChange={setPage} />
       </div>
+      <Dialog>{mode === "edit" && <FormEdit refetch={fetch} />}</Dialog>
     </section>
   );
 };

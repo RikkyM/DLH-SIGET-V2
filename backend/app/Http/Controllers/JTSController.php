@@ -6,7 +6,10 @@ use App\Models\JenisTitikSampah;
 use App\Models\TitikSampah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Laravel\Facades\Image;
 
 class JTSController extends Controller
 {
@@ -135,7 +138,7 @@ class JTSController extends Controller
         try {
             $titikSampah = TitikSampah::findOrFail($id);
             // dd($request->all());
-        return response()->json([ $request->all()]);
+            return response()->json([$request->all()]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
@@ -166,6 +169,47 @@ class JTSController extends Controller
                 'from'         => $jts->firstItem(),
                 'to'           => $jts->lastItem(),
             ]
+        ]);
+    }
+
+    public function updateMasterJts(Request $request, $id)
+    {
+        $jts = JenisTitikSampah::findOrFail($id);
+
+        $validated = $request->validate([
+            'nama' => 'sometimes|string|max:50',
+            'icon' => 'sometimes|image|mimes:jpg,jpeg,png,webp|max:2048|'
+        ]);
+
+        if ($request->filled('nama')) {
+            $jts->nama = $validated['nama'];
+        }
+
+        if ($request->hasFile('icon')) {
+            $file = $request->file('icon');
+
+            if ($jts->icon) {
+                Storage::disk('local')->delete($jts->icon);
+            }
+
+            $maxSize = 96;
+
+            $img = Image::read($file->getRealPath())
+                ->cover($maxSize, $maxSize);
+
+            $fileName = Str::uuid()->toString() . '.webp';
+            $path = "jenis-titik-sampah/{$fileName}";
+
+            Storage::disk('local')->put($path, (string) $img->toWebp(80));
+
+            $jts->icon = $path;
+        }
+
+        $jts->save();
+
+        return response()->json([
+            'message' => "Jenis titik sampah berhasil diupdate.",
+            'data' => $jts
         ]);
     }
 }

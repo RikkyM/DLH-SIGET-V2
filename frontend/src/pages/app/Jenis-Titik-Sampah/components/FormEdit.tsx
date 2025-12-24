@@ -1,6 +1,6 @@
 import { useDialog } from "@/hooks/useDialog";
 import { http } from "@/services/http";
-import type { Penugasan } from "@/types/master-data.types";
+import type { JTS } from "@/types/master-data.types";
 import axios from "axios";
 import {
   useEffect,
@@ -23,7 +23,7 @@ type ApiError = {
 };
 
 const FormEdit = ({ refetch }: { refetch: () => void }) => {
-  const { isOpen, data, closeDialog } = useDialog<Penugasan>();
+  const { isOpen, data, closeDialog } = useDialog<JTS>();
 
   const [formData, setFormData] = useState<State>({
     nama: "",
@@ -32,7 +32,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
 
-  const iconRef = useRef<HTMLInputElement | null>(null);
+  const fileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (!isOpen || !data?.id) return;
@@ -42,7 +42,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
     });
 
     setErrors({});
-    if (iconRef.current) iconRef.current.value = "";
+    if (fileRef.current) fileRef.current.value = "";
   }, [isOpen, data]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -60,9 +60,9 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
 
     const fd = new FormData();
 
-    Object.entries(formData).forEach(([key, value]) => {
+    Object.entries(formData).forEach(([Key, value]) => {
       if (value === null || value === "") return;
-      fd.append(key, String(value));
+      fd.append(Key, String(value));
     });
 
     if (icon) {
@@ -73,13 +73,13 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
 
     try {
       fd.append("_method", "PUT");
-      await http.post(`/api/penugasan/${data.id}`, fd, {
+      await http.post(`/api/master-data/jenis-titik-sampah/${data.id}`, fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       refetch();
       setIcon(null);
-      if (iconRef.current) iconRef.current.value = "";
+      if (fileRef.current) fileRef.current.value = "";
       closeDialog();
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -104,22 +104,22 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
         isOpen ? "scale-100" : "scale-95"
       }`}
     >
-      <h2 className="font-semibold lg:text-lg">Edit Penugasan</h2>
+      <h2 className="font-semibold lg:text-lg">Edit Jenis Titik Sampah</h2>
       <form
         onSubmit={handleSubmit}
         className="grid gap-5"
         encType="multipart/form-data"
       >
         <div className="space-y-1 text-sm">
-          <label htmlFor="nama_penugasan" className="block font-medium">
-            Nama Penugasan
+          <label htmlFor="nama_jts" className="block font-medium">
+            Nama Jenis Titik Sampah
           </label>
           <input
             className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
             type="text"
-            id="nama_penugasan"
+            id="nama_jts"
             name="nama"
-            placeholder="Masukkan nama TPS..."
+            placeholder="Masukkan nama Jenis Titik Sampah..."
             value={formData?.nama || ""}
             onChange={handleChange}
           />
@@ -133,7 +133,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           </label>
           <input
             className="w-full cursor-pointer rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            ref={iconRef}
+            ref={fileRef}
             type="file"
             id="icon"
             name="icon"
@@ -151,10 +151,10 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           )}
           {data?.icon && (
             <a
-              href={`${import.meta.env.VITE_API_BASE}/api/penugasan/${data.id}/icon?v=${encodeURIComponent(data.updated_at ?? "")}`}
+              href={`${import.meta.env.VITE_API_BASE}/api/jenis-titik-sampah/${data.id}/icon?v=${encodeURIComponent(data.updated_at ?? "")}`}
               target="_blank"
               rel="noreferrer noopener"
-              className="hover:underline inline-block text-sm m-1 hover:text-blue-500"
+              className="m-1 inline-block text-sm hover:text-blue-500 hover:underline"
             >
               Lihat Icon
             </a>

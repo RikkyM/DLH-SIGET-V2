@@ -1,6 +1,8 @@
 export type JTS = {
   id: number;
   nama: string;
+  icon: string;
+  updated_at: string;
 };
 
 export type Departments = {
@@ -41,4 +43,5 @@ export type JenisTitikSampah = {
   id: number;
   icon: string;
   nama: string;
+  updated_at: string;
 }
