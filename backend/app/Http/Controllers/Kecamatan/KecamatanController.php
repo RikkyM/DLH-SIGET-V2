@@ -34,4 +34,16 @@ class KecamatanController extends Controller
                 ]
             );
     }
+
+    public function filterKecamatan()
+    {
+        $kecamatan = Kecamatan::query()
+            ->select('id', 'nama_kecamatan')
+            ->orderBy('nama_kecamatan')
+            ->get();
+
+        return response()->json([
+            'kecamatan' => $kecamatan
+        ]);
+    }
 }

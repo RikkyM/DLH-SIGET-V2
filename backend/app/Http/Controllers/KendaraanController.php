@@ -76,6 +76,18 @@ class KendaraanController extends Controller
         ]);
     }
 
+    public function filterKendaraan()
+    {
+        $kendaraan = DataKendaraan::query()
+            ->select('id', 'no_plat', 'merk')
+            ->orderBy('merk')
+            ->get();
+
+        return response()->json([
+            'kendaraan' => $kendaraan
+        ]);
+    }
+
     public function index(Request $request)
     {
         $search = $request->input('search');

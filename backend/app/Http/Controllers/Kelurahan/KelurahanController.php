@@ -38,4 +38,19 @@ class KelurahanController extends Controller
             ]
         );
     }
+
+    public function filterKelurahan(Request $request)
+    {
+        $idKecamatan = $request->query('id_kecamatan');
+
+        $kelurahan = Kelurahan::query()
+            ->select('id', 'nama_kelurahan', 'id_kecamatan')
+            ->when($idKecamatan, fn($q) => $q->where('id_kecamatan', $idKecamatan))
+            ->orderBy('nama_kelurahan')
+            ->get();
+
+        return response()->json([
+            'kelurahan' => $kelurahan
+        ]);
+    }
 }

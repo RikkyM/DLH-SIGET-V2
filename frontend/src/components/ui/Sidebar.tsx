@@ -1,15 +1,17 @@
 import { NavLink } from "react-router-dom";
 import AccordionItem from "./AccordionItem";
+import Logo from "@/assets/img/dlh-logo.webp"
 
 const Sidebar = () => {
   return (
     <aside className="top-0 left-0 z-20 h-dvh w-72 min-w-72 overflow-auto border-r border-gray-200 shadow transition-colors">
-      <header className="mx-3 grid h-20 place-items-center border-b text-center text-xl font-semibold whitespace-nowrap transition-all duration-250">
+      <header className="mx-3 grid place-items-center border-b border-gray-300 py-3 text-center text-lg font-semibold transition-all duration-250">
         <NavLink
           to="/"
-          className="rounded-lg px-3 py-1.5 transition-all duration-300 hover:bg-gray-300"
+          className="rounded-lg px-3 py-1.5 transition-all duration-300 hover:bg-gray-300 flex flex-col items-center gap-2"
         >
-          DLH SIKPK V2
+          <img src={Logo} className="max-w-25" />
+          <span>Sistem Informasi Geografis Petugas dan TPS Versi 2</span>
         </NavLink>
       </header>
       <nav className="no-scrollbar flex-1 space-y-2 overflow-x-hidden overflow-y-auto p-3 text-sm lg:text-base">

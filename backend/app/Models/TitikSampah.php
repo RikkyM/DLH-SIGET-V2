@@ -27,4 +27,14 @@ class TitikSampah extends Model
     {
         return $this->belongsTo(DataKendaraan::class, 'armada', 'no_plat');
     }
+
+    public function kecamatan()
+    {
+        return $this->belongsTo(Kecamatan::class, 'id_kecamatan');
+    }
+
+    public function kelurahan()
+    {
+        return $this->belongsTo(Kelurahan::class, 'id_kelurahan');
+    }
 }

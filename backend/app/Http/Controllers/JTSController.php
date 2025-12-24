@@ -132,8 +132,16 @@ class JTSController extends Controller
 
     public function updateTps(Request $request, $id)
     {
-        $titikSampah = TitikSampah::findOrFail($id);
-        return response()->json($titikSampah);
+        try {
+            $titikSampah = TitikSampah::findOrFail($id);
+            // dd($request->all());
+        return response()->json([ $request->all()]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan pada server.'
+            ], 500);
+        }
     }
 
     public function masterJts(Request $request)

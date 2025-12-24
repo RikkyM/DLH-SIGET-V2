@@ -38,8 +38,8 @@ export type PenampunganForm = {
   armada?: string;
   nama?: string;
   nama_jalan?: string;
-  latitude?: string;
-  longitude?: string;
+  latitude?: string | number;
+  longitude?: string | number;
   vol_sampah?: string;
   status_kontainer?: string;
   rute_kerja?: string;

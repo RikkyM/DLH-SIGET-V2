@@ -65,6 +65,9 @@ Route::middleware('web')->group(function () {
         Route::get('/jts', [JTSController::class, 'getJts']);
         Route::get('/jenis-kendaraan', [JenisKendaraanController::class, 'getJenisKendaraan']);
         Route::get('/data-kendaraan/tahun-pembuatan', [KendaraanController::class, 'tahunPembuatan']);
+        Route::get('/kendaraan-filter', [KendaraanController::class, 'filterKendaraan']);
+        Route::get('/kecamatan-filter', [KecamatanController::class, 'filterKecamatan']);
+        Route::get('/kelurahan-filter', [KelurahanController::class, 'filterKelurahan']);
         Route::get('/tps/tnkb', [JTSController::class, 'tnkb']);
         Route::get('/tps/lambung', [JTSController::class, 'lambung']);
     });
