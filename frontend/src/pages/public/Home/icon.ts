@@ -1,4 +1,20 @@
+// import L from "leaflet";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+// Fix path icon default Leaflet untuk Vite
+import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
+import iconUrl from "leaflet/dist/images/marker-icon.png";
+import shadowUrl from "leaflet/dist/images/marker-shadow.png";
+
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })
+  ._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+});
 
 export const makePinIcon = (color: string) =>
   L.divIcon({
@@ -14,5 +30,4 @@ export const makePinIcon = (color: string) =>
     popupAnchor: [0, -30],
   });
 
-export const iconPetugas = makePinIcon("#008000");
 export const iconTitikSampah = makePinIcon("#ef4444");

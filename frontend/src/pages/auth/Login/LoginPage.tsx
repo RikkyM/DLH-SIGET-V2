@@ -62,7 +62,7 @@ const LoginPage = () => {
           </button>
           <hr className="my-4" />
           <h3 className="text-center text-sm text-gray-500">
-            © 2025 SIKPK DLH Kota Palembang
+            © 2025 SIGET DLH Kota Palembang
           </h3>
         </form>
       </div>

@@ -7,8 +7,21 @@ import MultiSelectDropdown, {
   type MultiSelectOption,
 } from "@/components/ui/MultiSelectDropdown";
 import logo from "@/assets/img/dlh-logo.webp";
-import { iconPetugas, iconTitikSampah } from "./icon";
+// import { iconPetugas, iconTitikSampah } from "./icon";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import L from "leaflet";
+
+const makeImageIcon = (url: string) =>
+  L.icon({
+    iconUrl: url,
+    iconSize: [34, 34], // sesuaikan ukuran icon kamu
+    iconAnchor: [17, 33], // titik nempel (mirip punyamu)
+    popupAnchor: [0, -30],
+    // optional shadow kalau mau:
+    // shadowUrl: shadowUrl,
+    // shadowSize: [41, 41],
+    // shadowAnchor: [13, 41],
+  });
 
 type FiltersDepartmentsResponse = {
   departments: MultiSelectOption[];
@@ -44,6 +57,7 @@ type MapMarker = {
   no_plat: string;
   lambung: string;
   jenis_kendaraan: string;
+  icon?: string | null
 };
 
 const getDepartmentFilters = async () => {
@@ -343,59 +357,69 @@ const Homepage = () => {
             </Popup>
           </Marker>
         ))} */}
-        {leafletMarkers.map((m) => (
-          <Marker
-            key={`${m.type}-${m.id}`}
-            position={[m.lat, m.lng]}
-            icon={m.type === "petugas" ? iconPetugas : iconTitikSampah}
-          >
-            <Popup>
-              <div className="flex items-start gap-3">
-                <img
-                  src={logo}
-                  alt="logo"
-                  className="h-12 w-12 shrink-0 rounded object-contain"
-                />
+        {leafletMarkers.map((m) => {
+          const markerIcon = m.icon ? makeImageIcon(m.icon) : undefined
+            // m.type === "petugas"
+            //   ? m.icon
+            //     ? makeImageIcon(m.icon)
+            //     : undefined // fallback default Leaflet
+            //   : iconTitikSampah; // titik sampah tetap divIcon merah
 
-                <div className="min-w-0 flex-1">
-                  <div className="font-semibold">{m.nama}</div>
-                  {m.type === "titik_sampah" && (
-                    <>
+          return (
+            <Marker
+              key={`${m.type}-${m.id}`}
+              position={[m.lat, m.lng]}
+              {...(markerIcon ? { icon: markerIcon } : {})}
+            >
+              <Popup>
+                <div className="flex items-start gap-3">
+                  <img
+                    src={logo}
+                    alt="logo"
+                    className="h-12 w-12 shrink-0 rounded object-contain"
+                  />
+
+                  <div className="min-w-0 flex-1">
+                    <div className="font-semibold">{m.nama}</div>
+                    {m.type === "titik_sampah" && (
+                      <>
+                        <div className="text-xs text-slate-600">
+                          {m?.jenis ?? "-"}
+                        </div>
+                        <div className="text-xs text-slate-600">
+                          {m?.no_plat ?? "-"}, ({m?.lambung})
+                        </div>
+                        <div className="text-xs text-slate-600">
+                          {m?.jenis_kendaraan ?? "-"}
+                        </div>
+                      </>
+                    )}
+                    <div className="capitalize">
+                      {m.nama_jalan}, {m?.kecamatan ?? "-"},{" "}
+                      {m?.kelurahan ?? "-"}
+                    </div>
+                    {m.rute_kerja && (
                       <div className="text-xs text-slate-600">
-                        {m?.jenis ?? "-"}
+                        {m?.rute_kerja ?? "-"}
                       </div>
+                    )}
+                    {m.type === "petugas" && (
                       <div className="text-xs text-slate-600">
-                        {m?.no_plat ?? "-"}, ({m?.lambung})
+                        Panjang Rute:{" "}
+                        {m?.panjang_jalur ? `${m.panjang_jalur} M` : "-"}
                       </div>
+                    )}
+                    {m.vol_sampah ? (
                       <div className="text-xs text-slate-600">
-                        {m?.jenis_kendaraan ?? "-"}
+                        Volume Sampah: {m?.vol_sampah} KG
                       </div>
-                    </>
-                  )}
-                  <div className="capitalize">
-                    {m.nama_jalan}, {m?.kecamatan ?? "-"}, {m?.kelurahan ?? "-"}
+                    ) : null}
                   </div>
-                  {m.rute_kerja && (
-                    <div className="text-xs text-slate-600">
-                      {m?.rute_kerja ?? "-"}
-                    </div>
-                  )}
-                  {m.type === "petugas" && (
-                    <div className="text-xs text-slate-600">
-                      Panjang Rute:{" "}
-                      {m?.panjang_jalur ? `${m.panjang_jalur} M` : "-"}
-                    </div>
-                  )}
-                  {m.vol_sampah ? (
-                    <div className="text-xs text-slate-600">
-                      Volume Sampah: {m?.vol_sampah} KG
-                    </div>
-                  ) : null}
                 </div>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
     </section>
   );

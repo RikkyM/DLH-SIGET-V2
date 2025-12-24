@@ -12,6 +12,7 @@ export type Penugasan = {
   id: number;
   icon: string;
   nama: string;
+  updated_at: string;
 };
 
 export type UnitKerja = {
