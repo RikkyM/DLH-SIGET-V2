@@ -123,4 +123,9 @@ class KendaraanController extends Controller
             ]
         );
     }
+
+    public function updateKendaraan(Request $request)
+    {
+        
+    }
 }

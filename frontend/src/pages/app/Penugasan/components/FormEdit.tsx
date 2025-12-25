@@ -119,7 +119,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
             type="text"
             id="nama_penugasan"
             name="nama"
-            placeholder="Masukkan nama TPS..."
+            placeholder="Masukkan nama penugasan..."
             value={formData?.nama || ""}
             onChange={handleChange}
           />

@@ -7,10 +7,15 @@ import { useDepartments } from "@/hooks/useDepartments";
 import { useJenisKendaraan } from "@/hooks/useJenisKendaraan";
 import { useTahunPembuatan } from "@/hooks/useTahunPembuatan";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
+import { useDialog } from "@/hooks/useDialog";
+import Dialog from "@/components/ui/Dialog";
+import FormEdit from "./components/FormEdit";
 
 const DataKendaraanPages = () => {
   useDocumentTitle("Data Kendaraan");
-  
+
+  const { mode, openDialog } = useDialog();
+
   const [search, setSearch] = useState("");
   const [unitKerja, setUnitKerja] = useState<number | undefined>();
   const [jenisKendaraan, setJenisKendaraan] = useState<number | undefined>();
@@ -22,7 +27,7 @@ const DataKendaraanPages = () => {
     meta,
     loading,
     error,
-    // fetch,
+    fetch,
     setPage,
     perPage,
     setPerPage,
@@ -67,13 +72,17 @@ const DataKendaraanPages = () => {
         <td className="text-center">{d?.nama_sopir ?? "-"}</td>
         <td className="text-center">{d?.keterangan ?? "-"}</td>
         <td className="sticky right-0 z-0 bg-white text-center">
-          <button className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200">
+          <button
+            type="button"
+            onClick={() => openDialog(d, "edit")}
+            className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200"
+          >
             <Pencil className="max-w-5" />
           </button>
         </td>
       </tr>
     ));
-  }, [data, meta?.from]);
+  }, [data, meta?.from, openDialog]);
 
   return (
     <section className="flex flex-1 flex-col gap-3 overflow-auto p-3">
@@ -240,6 +249,7 @@ const DataKendaraanPages = () => {
         </div>
         <Pagination meta={meta} onPageChange={setPage} />
       </div>
+      <Dialog>{mode === "edit" && <FormEdit refetch={fetch} />}</Dialog>
     </section>
   );
 };

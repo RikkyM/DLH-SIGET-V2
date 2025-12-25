@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import AccordionItem from "./AccordionItem";
-import Logo from "@/assets/img/dlh-logo.webp"
+import Logo from "@/assets/img/dlh-logo.webp";
 
 const Sidebar = () => {
   return (
@@ -8,7 +8,7 @@ const Sidebar = () => {
       <header className="mx-3 grid place-items-center border-b border-gray-300 py-3 text-center text-lg font-semibold transition-all duration-250">
         <NavLink
           to="/"
-          className="rounded-lg px-3 py-1.5 transition-all duration-300 hover:bg-gray-300 flex flex-col items-center gap-2"
+          className="flex flex-col items-center gap-2 rounded-lg px-3 py-1.5 transition-all duration-300 hover:bg-gray-300"
         >
           <img src={Logo} className="max-w-25" />
           <span>Sistem Informasi Geografis Petugas dan TPS Versi 2</span>
@@ -73,8 +73,8 @@ const Sidebar = () => {
         >
           Data Kendaraan
         </NavLink>
-        {/* <NavLink
-          to="/data-penugasan"
+        <NavLink
+          to="/rekap-per-kendaraan"
           className={({ isActive }) =>
             [
               "block flex items-center gap-2 rounded p-2 font-medium whitespace-nowrap transition-all duration-300 outline-none",
@@ -84,21 +84,8 @@ const Sidebar = () => {
             ].join(" ")
           }
         >
-          Penugasan
-        </NavLink> */}
-        {/* <NavLink
-          to="/jenis-titik-sampah"
-          className={({ isActive }) =>
-            [
-              "block flex items-center gap-2 rounded p-2 font-medium whitespace-nowrap transition-all duration-300 outline-none",
-              isActive
-                ? "bg-[#27AEB9] text-white shadow"
-                : "text-black hover:bg-gray-500/20",
-            ].join(" ")
-          }
-        >
-          Jenis Titik Sampah
-        </NavLink> */}
+          Rekap Per Kendaraan
+        </NavLink>
         <AccordionItem
           title="Master Data"
           routes={[
