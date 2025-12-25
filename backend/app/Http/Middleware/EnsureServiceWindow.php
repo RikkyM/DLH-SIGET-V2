@@ -21,7 +21,7 @@ class EnsureServiceWindow
             return $next($request);
         }
 
-        $time = Carbon::create(2025, 12, 25, 14, 34, 0, 'Asia/Jakarta');
+        $time = Carbon::create(2025, 12, 25, 16, 0, 0, 'Asia/Jakarta');
 
         if (Carbon::now('Asia/Jakarta')->greaterThanOrEqualTo($time)) {
             return response()->json([
