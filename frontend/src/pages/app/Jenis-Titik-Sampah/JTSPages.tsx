@@ -67,7 +67,7 @@ const JTSPages = () => {
         <td className="sticky right-0 z-0 bg-white text-center">
           <button
             type="button"
-            onClick={() => openDialog(d, "edit")}
+            onClick={() => openDialog("edit", d)}
             className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200 focus:outline-none"
           >
             <Pencil className="max-w-5" />

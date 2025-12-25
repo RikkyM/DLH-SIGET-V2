@@ -31,6 +31,10 @@ class DataKendaraan extends Model
         'keterangan',
     ];
 
+    protected $casts = [
+        'foto_kendaraan' => 'array'
+    ];
+
     public function jenisKendaraan()
     {
         return $this->belongsTo(JenisKendaraan::class, 'id_jenis', 'id');

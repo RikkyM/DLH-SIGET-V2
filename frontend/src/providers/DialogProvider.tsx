@@ -1,7 +1,7 @@
 import { DialogContext } from "@/contexts/DialogContext";
 import { useCallback, useMemo, useState, type ReactNode } from "react";
 
-export type DialogMode = "edit" | "detail" | undefined;
+export type DialogMode = 'tambah' | "edit" | "detail" | undefined;
 
 export const DialogProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<unknown>(null);
@@ -9,7 +9,7 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
   const [mode, setMode] = useState<DialogMode>();
 
   const openDialog = useCallback(
-    (getData?: unknown, mode: DialogMode = "detail") => {
+    (mode: DialogMode = "detail", getData?: unknown) => {
       setData(getData ?? null);
       setMode(mode);
       setIsOpen(true);

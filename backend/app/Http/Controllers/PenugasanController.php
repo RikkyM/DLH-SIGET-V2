@@ -90,7 +90,7 @@ class PenugasanController extends Controller
 
         $validated = $request->validate([
             'nama' => 'sometimes|string|max:50',
-            'icon' => 'sometimes|image|mimes:jpg,jpeg,png,webp|max:2048|'
+            'icon' => 'sometimes|image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
 
         if ($request->filled('nama')) {

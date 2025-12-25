@@ -74,7 +74,7 @@ const DataKendaraanPages = () => {
         <td className="sticky right-0 z-0 bg-white text-center">
           <button
             type="button"
-            onClick={() => openDialog(d, "edit")}
+            onClick={() => openDialog("edit", d)}
             className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200"
           >
             <Pencil className="max-w-5" />
@@ -90,112 +90,121 @@ const DataKendaraanPages = () => {
         <div className="space-y-2">
           <h4 className="text-xl font-semibold">Data Kendaraan</h4>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-2 text-sm text-gray-700">
-              Show:
-              <label
-                htmlFor="per_page"
-                className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
-              >
-                <select
-                  id="per_page"
-                  name="per_page"
-                  className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
-                  value={perPage}
-                  onChange={(e) => setPerPage(Number(e.target.value))}
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-2 text-sm text-gray-700">
+                Show:
+                <label
+                  htmlFor="per_page"
+                  className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
                 >
-                  {[10, 25, 50, 100].map((n) => (
-                    <option key={n} value={n}>
-                      {n}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
-              </label>
-            </div>
+                  <select
+                    id="per_page"
+                    name="per_page"
+                    className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
+                    value={perPage}
+                    onChange={(e) => setPerPage(Number(e.target.value))}
+                  >
+                    {[10, 25, 50, 100].map((n) => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
+                </label>
+              </div>
 
-            <label htmlFor="search" className="inline-block">
-              <input
-                type="search"
-                id="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                name="search"
-                placeholder="Search..."
-                autoComplete="off"
-                className="rounded-sm border border-gray-400 px-3 py-2 text-sm focus:ring focus:ring-blue-300 focus:outline-none"
-              />
-            </label>
+              <label htmlFor="search" className="inline-block">
+                <input
+                  type="search"
+                  id="search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  name="search"
+                  placeholder="Search..."
+                  autoComplete="off"
+                  className="rounded-sm border border-gray-400 px-3 py-2 text-sm focus:ring focus:ring-blue-300 focus:outline-none"
+                />
+              </label>
 
-            <div className="flex items-center gap-2 text-sm text-gray-700">
-              Filter:
-              <label
-                htmlFor="unit_kerja"
-                className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
-              >
-                <select
-                  id="unit_kerja"
-                  name="unit_kerja"
-                  className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
-                  value={unitKerja}
-                  onChange={(e) => {
-                    setUnitKerja(Number(e.target.value));
-                  }}
+              <div className="flex items-center gap-2 text-sm text-gray-700">
+                Filter:
+                <label
+                  htmlFor="unit_kerja"
+                  className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
                 >
-                  <option value="">Pilih Unit Kerja</option>
-                  {departments.map((dept, index) => (
-                    <option key={dept.id ?? index} value={dept.id}>
-                      {dept.nama}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
-              </label>
-              <label
-                htmlFor="id_jk"
-                className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
-              >
-                <select
-                  id="id_jk"
-                  name="id_jk"
-                  className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
-                  value={jenisKendaraan}
-                  onChange={(e) => {
-                    setJenisKendaraan(Number(e.target.value));
-                  }}
+                  <select
+                    id="unit_kerja"
+                    name="unit_kerja"
+                    className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
+                    value={unitKerja}
+                    onChange={(e) => {
+                      setUnitKerja(Number(e.target.value));
+                    }}
+                  >
+                    <option value="">Pilih Unit Kerja</option>
+                    {departments.map((dept, index) => (
+                      <option key={dept.id ?? index} value={dept.id}>
+                        {dept.nama}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
+                </label>
+                <label
+                  htmlFor="id_jk"
+                  className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
                 >
-                  <option value="">Pilih Jenis Kendaraan</option>
-                  {dataJk.map((dept, index) => (
-                    <option key={dept.id ?? index} value={dept.id}>
-                      {dept.nama}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
-              </label>
-              <label
-                htmlFor="tahun_pembuatan"
-                className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
-              >
-                <select
-                  id="tahun_pembuatan"
-                  name="tahun_pembuatan"
-                  className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
-                  value={tahun}
-                  onChange={(e) => {
-                    setTahun(Number(e.target.value));
-                  }}
+                  <select
+                    id="id_jk"
+                    name="id_jk"
+                    className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
+                    value={jenisKendaraan}
+                    onChange={(e) => {
+                      setJenisKendaraan(Number(e.target.value));
+                    }}
+                  >
+                    <option value="">Pilih Jenis Kendaraan</option>
+                    {dataJk.map((dept, index) => (
+                      <option key={dept.id ?? index} value={dept.id}>
+                        {dept.nama}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
+                </label>
+                <label
+                  htmlFor="tahun_pembuatan"
+                  className="relative flex items-center gap-1.5 rounded border border-gray-400 text-sm"
                 >
-                  <option value="">Pilih Tahun Pembuatan</option>
-                  {dataTahun.map((dept, index) => (
-                    <option key={dept ?? index} value={dept}>
-                      {dept}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
-              </label>
+                  <select
+                    id="tahun_pembuatan"
+                    name="tahun_pembuatan"
+                    className="cursor-pointer appearance-none py-2 pr-8 pl-3 focus:outline-none"
+                    value={tahun}
+                    onChange={(e) => {
+                      setTahun(Number(e.target.value));
+                    }}
+                  >
+                    <option value="">Pilih Tahun Pembuatan</option>
+                    {dataTahun.map((dept, index) => (
+                      <option key={dept ?? index} value={dept}>
+                        {dept}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-2 max-w-4" />
+                </label>
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={() => openDialog("tambah")}
+              className="cursor-pointer rounded-md border border-gray-300 bg-green-500 px-3 py-2 text-sm font-medium text-white shadow-xs transition-colors duration-300 hover:bg-green-600"
+            >
+              Tambah
+            </button>
           </div>
 
           {error ? <p className="text-sm text-red-600">{error}</p> : null}

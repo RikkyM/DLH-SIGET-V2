@@ -2,6 +2,7 @@ import { useDialog } from "@/hooks/useDialog";
 import axios from "axios";
 import type { KendaraanRes } from "../__types";
 import {
+  memo,
   useEffect,
   useRef,
   useState,
@@ -9,6 +10,9 @@ import {
   type FormEvent,
 } from "react";
 import { http } from "@/services/http";
+import { useJenisKendaraan } from "@/hooks/useJenisKendaraan";
+import { RefreshCw } from "lucide-react";
+import { usePetugasFilter } from "@/hooks/usePetugasFilter";
 
 type State = {
   id_jenis: number | null;
@@ -37,6 +41,13 @@ type ApiError = {
   errors?: ValidationErrors;
 };
 
+type FotoState = {
+  foto_depan: File | null;
+  foto_belakang: File | null;
+  foto_kanan: File | null;
+  foto_kiri: File | null;
+};
+
 const initialState: State = {
   id_jenis: null,
   id_department: null,
@@ -60,12 +71,37 @@ const initialState: State = {
 const FormEdit = ({ refetch }: { refetch: () => void }) => {
   const { isOpen, data, closeDialog } = useDialog<KendaraanRes>();
 
+  const { jenisKendaraan, loading: loadingJk } = useJenisKendaraan();
+  const { petugas, loading: loadingPetugas } = usePetugasFilter();
+
   const [formData, setFormData] = useState<State>(initialState);
-  const [foto, setFoto] = useState<File | null>(null);
+  const [foto, setFoto] = useState<FotoState>({
+    foto_depan: null,
+    foto_belakang: null,
+    foto_kanan: null,
+    foto_kiri: null,
+  });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
 
-  const fileRef = useRef<HTMLInputElement | null>(null);
+  const fotoDepanRef = useRef<HTMLInputElement>(null);
+  const fotoBelakangRef = useRef<HTMLInputElement>(null);
+  const fotoKananRef = useRef<HTMLInputElement>(null);
+  const fotoKiriRef = useRef<HTMLInputElement>(null);
+
+  const resetFileInputs = () => {
+    if (fotoDepanRef.current) fotoDepanRef.current.value = "";
+    if (fotoBelakangRef.current) fotoBelakangRef.current.value = "";
+    if (fotoKananRef.current) fotoKananRef.current.value = "";
+    if (fotoKiriRef.current) fotoKiriRef.current.value = "";
+
+    setFoto({
+      foto_depan: null,
+      foto_belakang: null,
+      foto_kanan: null,
+      foto_kiri: null,
+    });
+  };
 
   useEffect(() => {
     if (!isOpen || !data?.id) return;
@@ -74,9 +110,11 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
       ...prev,
       ...initialState,
       ...data,
+      foto_kendaraan: "",
     }));
 
     setErrors({});
+    resetFileInputs();
   }, [isOpen, data]);
 
   const handleChange = (
@@ -102,6 +140,16 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
     }));
   };
 
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, files } = e.target;
+    if (!files?.length) return;
+
+    setFoto((prev) => ({
+      ...prev,
+      [name]: files[0],
+    }));
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
@@ -114,20 +162,23 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
       fd.append(Key, String(value));
     });
 
-    if (foto) {
-      fd.append("foto_kendaraan", foto);
-    }
+    Object.entries(foto).forEach(([Key, file]) => {
+      if (file) {
+        fd.append(Key, file);
+      }
+    });
 
     setLoading(true);
+    setErrors({});
 
     try {
       fd.append("_method", "PUT");
-      await http.post(`/api/data-kendaraan/${data.id}`, formData, {
+      await http.post(`/api/data-kendaraan/${data.id}`, fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       refetch();
-      if (fileRef.current) fileRef.current.value = "";
+      resetFileInputs();
       closeDialog();
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -158,15 +209,15 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
         className="grid gap-5 md:grid-cols-2 lg:grid-cols-4"
         encType="multipart/form-data"
       >
-        <div className="space-y-1 text-sm">
-          <label htmlFor="no_plat" className="block font-medium">
+        <div className="space-y-1 text-sm lg:col-span-2">
+          <label htmlFor="no_plat" className="block w-max font-medium">
             No. TNKB
           </label>
           <input
             className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
             type="text"
             id="no_plat"
-            name="nama"
+            name="no_plat"
             placeholder="Masukkan nomor tnkb..."
             value={formData?.no_plat || ""}
             onChange={handleChange}
@@ -175,8 +226,8 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
             <p className="text-xs text-red-600">{fieldError("no_plat")}</p>
           )}
         </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="merk" className="block font-medium">
+        <div className="space-y-1 text-sm lg:col-span-2">
+          <label htmlFor="merk" className="block w-max font-medium">
             Merk
           </label>
           <input
@@ -193,7 +244,33 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="no_lambung" className="block font-medium">
+          <label htmlFor="jenis_kendaraan" className="block w-max font-medium">
+            Jenis Kendaraan
+          </label>
+          {loadingJk ? (
+            <RefreshCw className="max-w-4.5 animate-spin" />
+          ) : (
+            <select
+              id="jenis_kendaraan"
+              name="id_jenis"
+              className="w-full cursor-pointer appearance-none rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
+              value={formData?.id_jenis || ""}
+              onChange={handleChange}
+            >
+              <option value="">Pilih Jenis Kendaraan</option>
+              {jenisKendaraan.map((data, idx) => (
+                <option key={data.id ?? idx} value={data.id}>
+                  {data.nama}
+                </option>
+              ))}
+            </select>
+          )}
+          {fieldError("id_jenis") && (
+            <p className="text-xs text-red-600">{fieldError("id_jenis")}</p>
+          )}
+        </div>
+        <div className="space-y-1 text-sm">
+          <label htmlFor="no_lambung" className="block w-max font-medium">
             No. Lambung
           </label>
           <input
@@ -210,7 +287,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="no_rangka" className="block font-medium">
+          <label htmlFor="no_rangka" className="block w-max font-medium">
             No. Rangka
           </label>
           <input
@@ -227,7 +304,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="no_mesin" className="block font-medium">
+          <label htmlFor="no_mesin" className="block w-max font-medium">
             No. Mesin
           </label>
           <input
@@ -244,7 +321,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="no_stnk" className="block font-medium">
+          <label htmlFor="no_stnk" className="block w-max font-medium">
             No. STNK
           </label>
           <input
@@ -261,7 +338,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="tahun_pembuatan" className="block font-medium">
+          <label htmlFor="tahun_pembuatan" className="block w-max font-medium">
             Tahun Pembuatan
           </label>
           <input
@@ -280,7 +357,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="kapasitas_mesin" className="block font-medium">
+          <label htmlFor="kapasitas_mesin" className="block w-max font-medium">
             Kapasitas Mesin
           </label>
           <input
@@ -299,7 +376,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="warna" className="block font-medium">
+          <label htmlFor="warna" className="block w-max font-medium">
             Warna Kendaraan
           </label>
           <input
@@ -316,7 +393,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="berat" className="block font-medium">
+          <label htmlFor="berat" className="block w-max font-medium">
             Berat Kendaraan
           </label>
           <input
@@ -333,7 +410,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="jumlah_kontainer" className="block font-medium">
+          <label htmlFor="jumlah_kontainer" className="block w-max font-medium">
             Jumlah Kontainer
           </label>
           <input
@@ -352,7 +429,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           )}
         </div>
         <div className="space-y-1 text-sm">
-          <label htmlFor="kondisi" className="block font-medium">
+          <label htmlFor="kondisi" className="block w-max font-medium">
             Kondisi Kendaraan
           </label>
           <select
@@ -371,31 +448,34 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
             <p className="text-xs text-red-600">{fieldError("kondisi")}</p>
           )}
         </div>
-        <div className="space-y-1 text-sm md:col-span-2">
-          <label htmlFor="foto_kendaraan" className="block font-medium">
-            Foto Kendaraan
+        <div className="space-y-1 text-sm">
+          <label htmlFor="petugas" className="block w-max font-medium">
+            Nama Petugas
           </label>
-          <input
-            className="w-full cursor-pointer rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="file"
-            accept="image/*"
-            id="foto_kendaraan"
-            name="foto_kendaraan"
-            value={formData?.foto_kendaraan || ""}
-            onChange={(e) => {
-              const file = e.target.files?.[0] ?? null;
-
-              setFoto(file);
-            }}
-          />
-          {fieldError("foto_kendaraan") && (
-            <p className="text-xs text-red-600">
-              {fieldError("foto_kendaraan")}
-            </p>
+          {loadingPetugas ? (
+            <RefreshCw className="max-w-4.5 animate-spin" />
+          ) : (
+            <select
+              id="petugas"
+              name="id_petugas"
+              className="w-full cursor-pointer appearance-none rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
+              value={formData?.id_petugas || ""}
+              onChange={handleChange}
+            >
+              <option value="">Pilih Petugas</option>
+              {petugas.map((data, idx) => (
+                <option key={data.id ?? idx} value={data.id}>
+                  {data.nama}
+                </option>
+              ))}
+            </select>
+          )}
+          {fieldError("id_petugas") && (
+            <p className="text-xs text-red-600">{fieldError("id_petugas")}</p>
           )}
         </div>
-        <div className="space-y-1 text-sm md:col-span-2">
-          <label htmlFor="keterangan" className="block font-medium">
+        <div className="space-y-1 text-sm md:col-span-2 lg:col-span-4">
+          <label htmlFor="keterangan" className="block w-max font-medium">
             Keterangan
           </label>
           <input
@@ -410,6 +490,122 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           {fieldError("keterangan") && (
             <p className="text-xs text-red-600">{fieldError("keterangan")}</p>
           )}
+        </div>
+
+        <div className="grid gap-5 md:col-span-2 md:grid-cols-2 lg:col-span-4 lg:grid-cols-4">
+          <h2 className="border-b font-medium md:col-span-2 lg:col-span-4">
+            Foto Kendaraan
+          </h2>
+          <div className="space-y-1 text-sm">
+            <label htmlFor="foto_depan" className="block w-max font-medium">
+              Foto Depan
+            </label>
+            <input
+              ref={fotoDepanRef}
+              className="w-full cursor-pointer rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
+              type="file"
+              accept="image/*"
+              id="foto_depan"
+              name="foto_depan"
+              onChange={handleFileChange}
+            />
+            {data?.foto_kendaraan?.foto_depan && (
+              <a
+                href={`${import.meta.env.VITE_API_BASE}/api/data-kendaraan/${data.id}/foto_depan/icon?v=${encodeURIComponent(data.updated_at ?? "")}`}
+                rel="noreferrer noopener"
+                className="text-blue-500 hover:underline"
+                target="_blank"
+              >
+                Lihat foto
+              </a>
+            )}
+            {fieldError("foto_depan") && (
+              <p className="text-xs text-red-600">{fieldError("foto_depan")}</p>
+            )}
+          </div>
+          <div className="space-y-1 text-sm">
+            <label htmlFor="foto_belakang" className="block w-max font-medium">
+              Foto Belakang
+            </label>
+            <input
+              ref={fotoBelakangRef}
+              className="w-full cursor-pointer rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
+              type="file"
+              accept="image/*"
+              id="foto_belakang"
+              name="foto_belakang"
+              onChange={handleFileChange}
+            />
+            {data?.foto_kendaraan?.foto_belakang && (
+              <a
+                href={`${import.meta.env.VITE_API_BASE}/api/data-kendaraan/${data.id}/foto_belakang/icon?v=${encodeURIComponent(data.updated_at ?? "")}`}
+                rel="noreferrer noopener"
+                className="text-blue-500 hover:underline"
+                target="_blank"
+              >
+                Lihat foto
+              </a>
+            )}
+            {fieldError("foto_belakang") && (
+              <p className="text-xs text-red-600">
+                {fieldError("foto_belakang")}
+              </p>
+            )}
+          </div>
+          <div className="space-y-1 text-sm">
+            <label htmlFor="foto_kanan" className="block w-max font-medium">
+              Foto Kanan
+            </label>
+            <input
+              ref={fotoKananRef}
+              className="w-full cursor-pointer rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
+              type="file"
+              accept="image/*"
+              id="foto_kanan"
+              name="foto_kanan"
+              onChange={handleFileChange}
+            />
+            {data?.foto_kendaraan?.foto_kanan && (
+              <a
+                href={`${import.meta.env.VITE_API_BASE}/api/data-kendaraan/${data.id}/foto_kanan/icon?v=${encodeURIComponent(data.updated_at ?? "")}`}
+                rel="noreferrer noopener"
+                className="text-blue-500 hover:underline"
+                target="_blank"
+              >
+                Lihat foto
+              </a>
+            )}
+            {fieldError("foto_kanan") && (
+              <p className="text-xs text-red-600">{fieldError("foto_kanan")}</p>
+            )}
+          </div>
+          <div className="space-y-1 text-sm">
+            <label htmlFor="foto_kiri" className="block w-max font-medium">
+              Foto Kiri
+            </label>
+            <input
+              ref={fotoKiriRef}
+              className="w-full cursor-pointer rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
+              type="file"
+              accept="image/*"
+              id="foto_kiri"
+              name="foto_kiri"
+              onChange={handleFileChange}
+            />
+            {data?.foto_kendaraan?.foto_kiri && (
+              <a
+                href={`${import.meta.env.VITE_API_BASE}/api/data-kendaraan/${data.id}/foto_kiri/icon?v=${encodeURIComponent(data.updated_at ?? "")}`}
+                rel="noreferrer noopener"
+                className="text-blue-500 hover:underline"
+                target="_blank"
+              >
+                Lihat foto
+              </a>
+            )}
+            {fieldError("foto_kiri") && (
+              <p className="text-xs text-red-600">{fieldError("foto_kiri")}</p>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-2 place-self-end md:col-span-2 lg:col-span-4">
           <button
@@ -432,4 +628,4 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
   );
 };
 
-export default FormEdit;
+export default memo(FormEdit);

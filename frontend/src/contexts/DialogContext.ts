@@ -4,8 +4,8 @@ import { createContext } from "react";
 type DialogContextType = {
   isOpen: boolean;
   data: unknown;
-  mode: DialogMode | undefined,
-  openDialog: (data?: unknown, mode?: DialogMode) => void;
+  mode: DialogMode | undefined;
+  openDialog: (mode?: DialogMode, data?: unknown) => void;
   closeDialog: () => void;
 };
 

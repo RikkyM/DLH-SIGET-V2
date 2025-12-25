@@ -74,9 +74,11 @@ Route::middleware('web')->group(function () {
         Route::get('/kelurahan-filter', [KelurahanController::class, 'filterKelurahan']);
         Route::get('/tps/tnkb', [JTSController::class, 'tnkb']);
         Route::get('/tps/lambung', [JTSController::class, 'lambung']);
+        Route::get('/petugas-filter', [PetugasController::class, 'getPetugas']);
 
         //icon
         Route::get('/penugasan/{id}/icon', [PrivateController::class, 'penugasanIcon']);
+        Route::get('/data-kendaraan/{id}/{direction}/icon', [PrivateController::class, 'fotoKendaraan']);
         Route::get('/jenis-titik-sampah/{id}/icon', [PrivateController::class, 'JTSIcon']);
     });
 });

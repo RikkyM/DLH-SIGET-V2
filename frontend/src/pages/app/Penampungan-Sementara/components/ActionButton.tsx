@@ -12,14 +12,14 @@ const ActionButton = ({ data }: Props) => {
     <div className="flex items-center gap-2">
       <button
         type="button"
-        onClick={() => openDialog(data, 'edit')}
+        onClick={() => openDialog("edit", data)}
         className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200 focus:outline-none"
       >
         <Pencil className="max-w-5" />
       </button>
       <button
         type="button"
-        onClick={() => openDialog(data, 'detail')}
+        onClick={() => openDialog("detail", data)}
         className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200 focus:outline-none"
       >
         <FileText className="max-w-5" />

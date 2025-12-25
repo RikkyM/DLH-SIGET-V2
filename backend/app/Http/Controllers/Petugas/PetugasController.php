@@ -52,6 +52,27 @@ class PetugasController extends Controller
         );
     }
 
+    public function getPetugas(Request $request)
+    {
+        $petugas = Petugas::query()
+            ->select('id', 'nama')
+            ->where(function ($data) {
+                $data->where('nama', '!=', '')
+                    ->whereNotNull('nama')
+                    ->where('nama', 'not like', "%admin%");
+            })
+            ->whereHas('department', function ($q) {
+                $q->whereNotIn('nama', ['Our Company', 'NON AKTIF', 'SEKRETARIAT']);
+            })
+            ->orderBy('nama')
+            ->get()
+            ->values();
+
+        return response()->json([
+            'petugas' => $petugas
+        ]);
+    }
+
     public function update(Request $request, $id)
     {
         $validated = $request->validate([

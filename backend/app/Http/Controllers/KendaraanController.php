@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\KendaraanRequest;
 use App\Models\DataKendaraan;
+use App\Models\Department;
+use App\Models\Petugas;
 use App\Models\TitikSampah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Laravel\Facades\Image;
 
 class KendaraanController extends Controller
 {
@@ -124,8 +130,54 @@ class KendaraanController extends Controller
         );
     }
 
-    public function updateKendaraan(Request $request)
+    public function updateKendaraan(KendaraanRequest $request, $id)
     {
-        
+        $data = DataKendaraan::with('department')->findOrFail($id);
+
+        $payload = $request->validated();
+
+        $paths = $data->foto_kendaraan ?? [];
+
+        $getNoPlat = $payload['no_plat'] ?? $data->no_plat;
+        $noPlat  = str_replace(' ', '', $getNoPlat);
+        $getLambung = $payload['lambung_baru'] ?? $data->lambung_baru;
+        $lambung = str_replace(' ', '', $getLambung);
+        $department = str_replace(' ', '', $data->department->nama);
+
+        $fotoFields = ['foto_depan', 'foto_belakang', 'foto_kanan', 'foto_kiri'];
+
+        foreach ($fotoFields as $field) {
+            if ($request->hasFile($field)) {
+                if (!empty($paths[$field])) {
+                    Storage::disk('local')->delete($paths[$field]);
+                }
+
+                $file = $request->file($field);
+
+                $side = str_replace('foto_', '', $field);
+
+                $fileName = "{$noPlat}_{$lambung}_{$department}_{$side}." . $file->getClientOriginalExtension();
+
+                $dir = $file->storeAs('kendaraan', $fileName, 'local');
+                $paths[$field] = $dir;
+            }
+        }
+
+        $payload['foto_kendaraan'] = $paths;
+
+        if (!empty($payload['id_petugas'])) {
+            $payload['nama_sopir'] = Petugas::whereKey($payload['id_petugas'])->value('nama');
+        }
+
+        if (!empty($payload['id_jenis'])) {
+            $payload['uptd'] = Department::whereKey($payload['id_department'])->value('nama');
+        }
+
+        $data->update($payload);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Data kendaraan berhasil diupdate.'
+        ], 200);
     }
 }

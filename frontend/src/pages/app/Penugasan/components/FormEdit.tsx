@@ -137,7 +137,6 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
             type="file"
             id="icon"
             name="icon"
-            placeholder="Masukkan nama TPS..."
             accept="image/*"
             // value={formData?.icon || ""}
             onChange={(e) => {

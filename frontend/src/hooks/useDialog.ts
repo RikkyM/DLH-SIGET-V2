@@ -12,7 +12,7 @@ export const useDialog = <T>() => {
     isOpen: ctx.isOpen,
     data: ctx.data as T | null,
     mode: ctx.mode,
-    openDialog: (data?: T, mode?: DialogMode) => ctx.openDialog(data, mode),
+    openDialog: (mode?: DialogMode, data?: T) => ctx.openDialog(mode, data),
     closeDialog: ctx.closeDialog,
   };
 };
