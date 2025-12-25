@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureServiceWindow;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // $middleware->api(prepend: [
         //     ThrottleRequests::class . ':60,1'
         // ]);
+        $middleware->append(EnsureServiceWindow::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
