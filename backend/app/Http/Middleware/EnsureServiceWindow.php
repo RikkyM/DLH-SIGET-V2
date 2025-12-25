@@ -17,18 +17,18 @@ class EnsureServiceWindow
     public function handle(Request $request, Closure $next): Response
     {
 
-        // if (!$request->is('api/*')) {
-        //     return $next($request);
-        // }
+        if (!$request->is('api/*')) {
+            return $next($request);
+        }
 
-        // $time = Carbon::create(2025, 12, 25, 16, 0, 0, 'Asia/Jakarta');
+        $time = Carbon::create(2025, 12, 25, 16, 0, 0, 'Asia/Jakarta');
 
-        // if (Carbon::now('Asia/Jakarta')->greaterThanOrEqualTo($time)) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Service temporarily unavailable.',
-        //     ], 503);
-        // }
+        if (Carbon::now('Asia/Jakarta')->greaterThanOrEqualTo($time)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Service temporarily unavailable.',
+            ], 503);
+        }
 
         return $next($request);
     }
