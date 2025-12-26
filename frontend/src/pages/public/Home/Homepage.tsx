@@ -11,16 +11,20 @@ import logo from "@/assets/img/dlh-logo.webp";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import L from "leaflet";
 
-const makeImageIcon = (url: string) =>
+// const makeImageIcon = (url: string) =>
+//   L.icon({
+//     iconUrl: url,
+//     iconSize: [34, 34],
+//     iconAnchor: [17, 33],
+//     popupAnchor: [0, -30],
+//   });
+
+const makeImageIcon = (url: string, size: [number, number]) =>
   L.icon({
     iconUrl: url,
-    iconSize: [34, 34], // sesuaikan ukuran icon kamu
-    iconAnchor: [17, 33], // titik nempel (mirip punyamu)
-    popupAnchor: [0, -30],
-    // optional shadow kalau mau:
-    // shadowUrl: shadowUrl,
-    // shadowSize: [41, 41],
-    // shadowAnchor: [13, 41],
+    iconSize: size,
+    iconAnchor: [size[0] / 2, size[1] - 1], // biar nempel bawah tengah
+    popupAnchor: [0, -size[1] + 4],
   });
 
 type FiltersDepartmentsResponse = {
@@ -57,7 +61,7 @@ type MapMarker = {
   no_plat: string;
   lambung: string;
   jenis_kendaraan: string;
-  icon?: string | null
+  icon?: string | null;
 };
 
 const getDepartmentFilters = async () => {
@@ -119,7 +123,7 @@ const getMapMarkers = async (params: {
 };
 
 const Homepage = () => {
-  useDocumentTitle('SIGET DLH PALEMBANG')
+  useDocumentTitle("SIGET DLH PALEMBANG");
 
   const center: LatLngExpression = [-2.9761, 104.7754];
 
@@ -357,13 +361,18 @@ const Homepage = () => {
             </Popup>
           </Marker>
         ))} */}
+        {/* {leafletMarkers.map((m) => {
+          const markerIcon = m.icon ? makeImageIcon(m.icon) : undefined; */}
         {leafletMarkers.map((m) => {
-          const markerIcon = m.icon ? makeImageIcon(m.icon) : undefined
-            // m.type === "petugas"
-            //   ? m.icon
-            //     ? makeImageIcon(m.icon)
-            //     : undefined // fallback default Leaflet
-            //   : iconTitikSampah; // titik sampah tetap divIcon merah
+          const size: [number, number] =
+            m.type === "petugas" ? [50, 50] : [30, 30];
+
+          const markerIcon = m.icon ? makeImageIcon(m.icon, size) : undefined;
+          // m.type === "petugas"
+          //   ? m.icon
+          //     ? makeImageIcon(m.icon)
+          //     : undefined // fallback default Leaflet
+          //   : iconTitikSampah; // titik sampah tetap divIcon merah
 
           return (
             <Marker
