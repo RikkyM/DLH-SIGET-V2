@@ -53,7 +53,7 @@ class KendaraanRequest extends FormRequest
             'no_mesin' => $this->req() . '|string|max:25',
             'no_stnk' => $this->req() . '|string|max:25',
             'tahun_pembuatan' => $this->req() . '|integer|digits:4|min:2000|max:' . date('Y'),
-            'kapasitas_mesin' => $this->req() . '|string|max:10',
+            'kapasitas_mesin' => $this->req() . '|integer|min:1',
             'warna' => $this->req() . '|string|max:15',
             'berat' => $this->req() . '|string|max:10',
             'jumlah_kontainer' => $this->req() . '|string|max:10',

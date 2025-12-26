@@ -1,5 +1,6 @@
 import { useDialog } from "@/hooks/useDialog";
 import { http } from "@/services/http";
+import type { ApiError, ValidationErrors } from "@/types/error.types";
 import type { JTS } from "@/types/master-data.types";
 import axios from "axios";
 import {
@@ -13,13 +14,6 @@ import {
 type State = {
   nama: string;
   icon?: string;
-};
-
-type ValidationErrors = Record<string, string[]>;
-
-type ApiError = {
-  message?: string;
-  errors?: ValidationErrors;
 };
 
 const FormEdit = ({ refetch }: { refetch: () => void }) => {

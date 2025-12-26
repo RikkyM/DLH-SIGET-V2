@@ -1,6 +1,11 @@
 import { useDialog } from "@/hooks/useDialog";
 import axios from "axios";
-import type { KendaraanRes } from "../__types";
+import {
+  initialState,
+  type FormState,
+  type FotoState,
+  type KendaraanRes,
+} from "../__types";
 import {
   memo,
   useEffect,
@@ -13,60 +18,8 @@ import { http } from "@/services/http";
 import { useJenisKendaraan } from "@/hooks/useJenisKendaraan";
 import { RefreshCw } from "lucide-react";
 import { usePetugasFilter } from "@/hooks/usePetugasFilter";
-
-type State = {
-  id_jenis: number | null;
-  id_department: number | null;
-  id_petugas: number | null;
-  no_plat: string;
-  merk: string;
-  lambung_baru: string;
-  no_rangka: string;
-  no_mesin: string;
-  no_stnk: string;
-  tahun_pembuatan: string;
-  kapasitas_mesin: string;
-  warna: string;
-  berat: string;
-  jumlah_kontainer: string;
-  kondisi: string;
-  foto_kendaraan: string;
-  keterangan: string;
-};
-
-type ValidationErrors = Record<string, string[]>;
-
-type ApiError = {
-  message?: string;
-  errors?: ValidationErrors;
-};
-
-type FotoState = {
-  foto_depan: File | null;
-  foto_belakang: File | null;
-  foto_kanan: File | null;
-  foto_kiri: File | null;
-};
-
-const initialState: State = {
-  id_jenis: null,
-  id_department: null,
-  id_petugas: null,
-  no_plat: "",
-  merk: "",
-  lambung_baru: "",
-  no_rangka: "",
-  no_mesin: "",
-  no_stnk: "",
-  tahun_pembuatan: "",
-  kapasitas_mesin: "",
-  warna: "",
-  berat: "",
-  jumlah_kontainer: "",
-  kondisi: "",
-  foto_kendaraan: "",
-  keterangan: "",
-};
+import FormTextField from "./FormTextField";
+import type { ApiError, ValidationErrors } from "@/types/error.types";
 
 const FormEdit = ({ refetch }: { refetch: () => void }) => {
   const { isOpen, data, closeDialog } = useDialog<KendaraanRes>();
@@ -74,7 +27,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
   const { jenisKendaraan, loading: loadingJk } = useJenisKendaraan();
   const { petugas, loading: loadingPetugas } = usePetugasFilter();
 
-  const [formData, setFormData] = useState<State>(initialState);
+  const [formData, setFormData] = useState<FormState>(initialState);
   const [foto, setFoto] = useState<FotoState>({
     foto_depan: null,
     foto_belakang: null,
@@ -209,40 +162,26 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
         className="grid gap-5 md:grid-cols-2 lg:grid-cols-4"
         encType="multipart/form-data"
       >
-        <div className="space-y-1 text-sm lg:col-span-2">
-          <label htmlFor="no_plat" className="block w-max font-medium">
-            No. TNKB
-          </label>
-          <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="text"
-            id="no_plat"
-            name="no_plat"
-            placeholder="Masukkan nomor tnkb..."
-            value={formData?.no_plat || ""}
-            onChange={handleChange}
-          />
-          {fieldError("no_plat") && (
-            <p className="text-xs text-red-600">{fieldError("no_plat")}</p>
-          )}
-        </div>
-        <div className="space-y-1 text-sm lg:col-span-2">
-          <label htmlFor="merk" className="block w-max font-medium">
-            Merk
-          </label>
-          <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="text"
-            id="merk"
-            name="merk"
-            placeholder="Masukkan merk kendaraan..."
-            value={formData?.merk || ""}
-            onChange={handleChange}
-          />
-          {fieldError("merk") && (
-            <p className="text-xs text-red-600">{fieldError("merk")}</p>
-          )}
-        </div>
+        <FormTextField
+          label="No. TNKB"
+          name="no_plat"
+          id="no_plat"
+          value={formData?.no_plat || ""}
+          placeholder="Masukkan nomor tnkb..."
+          onChange={handleChange}
+          error={fieldError("no_plat")}
+          className="lg:col-span-2"
+        />
+        <FormTextField
+          label="Merk"
+          name="merk"
+          id="merk"
+          value={formData?.merk || ""}
+          placeholder="Masukkan merk kendaraan..."
+          onChange={handleChange}
+          error={fieldError("merk")}
+          className="lg:col-span-2"
+        />
         <div className="space-y-1 text-sm">
           <label htmlFor="jenis_kendaraan" className="block w-max font-medium">
             Jenis Kendaraan
@@ -269,165 +208,83 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
             <p className="text-xs text-red-600">{fieldError("id_jenis")}</p>
           )}
         </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="no_lambung" className="block w-max font-medium">
-            No. Lambung
-          </label>
-          <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="text"
-            id="no_lambung"
-            name="lambung_baru"
-            placeholder="Masukkan nomor lambung..."
-            value={formData?.lambung_baru || ""}
-            onChange={handleChange}
-          />
-          {fieldError("lambung_baru") && (
-            <p className="text-xs text-red-600">{fieldError("lambung_baru")}</p>
-          )}
-        </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="no_rangka" className="block w-max font-medium">
-            No. Rangka
-          </label>
-          <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="text"
-            id="no_rangka"
-            name="no_rangka"
-            placeholder="Masukkan nomor rangka..."
-            value={formData?.no_rangka || ""}
-            onChange={handleChange}
-          />
-          {fieldError("no_rangka") && (
-            <p className="text-xs text-red-600">{fieldError("no_rangka")}</p>
-          )}
-        </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="no_mesin" className="block w-max font-medium">
-            No. Mesin
-          </label>
-          <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="text"
-            id="no_mesin"
-            name="no_mesin"
-            placeholder="Masukkan nomor mesin..."
-            value={formData?.no_mesin || ""}
-            onChange={handleChange}
-          />
-          {fieldError("no_mesin") && (
-            <p className="text-xs text-red-600">{fieldError("no_mesin")}</p>
-          )}
-        </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="no_stnk" className="block w-max font-medium">
-            No. STNK
-          </label>
-          <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="text"
-            id="no_stnk"
-            name="no_stnk"
-            placeholder="Masukkan nomor stnk..."
-            value={formData?.no_stnk || ""}
-            onChange={handleChange}
-          />
-          {fieldError("no_stnk") && (
-            <p className="text-xs text-red-600">{fieldError("no_stnk")}</p>
-          )}
-        </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="tahun_pembuatan" className="block w-max font-medium">
-            Tahun Pembuatan
-          </label>
-          <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="text"
-            id="tahun_pembuatan"
-            name="tahun_pembuatan"
-            placeholder="Masukkan tahun pembuatan..."
-            value={formData?.tahun_pembuatan || ""}
-            onChange={handleChange}
-          />
-          {fieldError("tahun_pembuatan") && (
-            <p className="text-xs text-red-600">
-              {fieldError("tahun_pembuatan")}
-            </p>
-          )}
-        </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="kapasitas_mesin" className="block w-max font-medium">
-            Kapasitas Mesin
-          </label>
-          <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="text"
-            id="kapasitas_mesin"
-            name="kapasitas_mesin"
-            placeholder="Masukkan kapasitas mesin..."
-            value={formData?.kapasitas_mesin || ""}
-            onChange={handleChange}
-          />
-          {fieldError("kapasitas_mesin") && (
-            <p className="text-xs text-red-600">
-              {fieldError("kapasitas_mesin")}
-            </p>
-          )}
-        </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="warna" className="block w-max font-medium">
-            Warna Kendaraan
-          </label>
-          <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="text"
-            id="warna"
-            name="warna"
-            placeholder="Masukkan warna kendaraan..."
-            value={formData?.warna || ""}
-            onChange={handleChange}
-          />
-          {fieldError("warna") && (
-            <p className="text-xs text-red-600">{fieldError("warna")}</p>
-          )}
-        </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="berat" className="block w-max font-medium">
-            Berat Kendaraan
-          </label>
-          <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="text"
-            id="berat"
-            name="berat"
-            placeholder="Masukkan berat kendaraan..."
-            value={formData?.berat || ""}
-            onChange={handleChange}
-          />
-          {fieldError("berat") && (
-            <p className="text-xs text-red-600">{fieldError("berat")}</p>
-          )}
-        </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="jumlah_kontainer" className="block w-max font-medium">
-            Jumlah Kontainer
-          </label>
-          <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="text"
-            id="jumlah_kontainer"
-            name="jumlah_kontainer"
-            placeholder="Masukkan jumlah kontainer..."
-            value={formData?.jumlah_kontainer || ""}
-            onChange={handleChange}
-          />
-          {fieldError("jumlah_kontainer") && (
-            <p className="text-xs text-red-600">
-              {fieldError("jumlah_kontainer")}
-            </p>
-          )}
-        </div>
+        <FormTextField
+          label="No. Lambung"
+          name="lambung_baru"
+          id="no_lambung"
+          value={formData?.lambung_baru || ""}
+          placeholder="Masukkan nomor lambung..."
+          error={fieldError("lambung_baru")}
+          onChange={handleChange}
+        />
+        <FormTextField
+          label="no_rangka"
+          name="no_rangka"
+          id="no_rangka"
+          value={formData?.no_rangka || ""}
+          placeholder="Masukkan nomor rangka..."
+          error={fieldError("no_rangka")}
+          onChange={handleChange}
+        />
+        <FormTextField
+          label="No. Mesin"
+          id="no_mesin"
+          name="no_mesin"
+          value={formData?.no_mesin || ""}
+          placeholder="Masukkan nomor mesin..."
+          error={fieldError("no_mesin")}
+          onChange={handleChange}
+        />
+        <FormTextField
+          label="No. STNK"
+          id="no_stnk"
+          name="no_stnk"
+          value={formData?.no_stnk || ""}
+          placeholder="Masukkan nomor stnk..."
+          error={fieldError("no_stnk")}
+          onChange={handleChange}
+        />
+        <FormTextField
+          label="Tahun Pembuatan"
+          id="tahun_pembuatan"
+          name="tahun_pembuatan"
+          value={formData?.tahun_pembuatan || ""}
+          placeholder="Masukkan tahun pembuatan..."
+          error={fieldError("tahun_pembuatan")}
+          onChange={handleChange}
+        />
+        <FormTextField
+          label="Kapasitas Mesin"
+          id="kapasitas_mesin"
+          name="kapasitas_mesin"
+          placeholder="Masukkan kapasitas mesin..."
+          value={formData?.kapasitas_mesin || ""}
+          onChange={handleChange}
+        />
+        <FormTextField
+          label="Warna Kendaraan"
+          name="warna"
+          id="warna"
+          placeholder="Masukkan warna kendaraan..."
+          value={formData?.warna || ""}
+          onChange={handleChange}
+        />
+        <FormTextField
+          label="Berat Kendaraan"
+          name="berat"
+          id="berat"
+          placeholder="Masukkan berat kendaraan..."
+          value={formData?.berat || ""}
+          onChange={handleChange}
+        />
+        <FormTextField
+          label="Jumlah Kontainer"
+          name="jumlah_kontainer"
+          id="jumlah_kontainer"
+          placeholder="Masukkan jumlah kontainer..."
+          value={formData?.jumlah_kontainer || ""}
+          onChange={handleChange}
+        />
         <div className="space-y-1 text-sm">
           <label htmlFor="kondisi" className="block w-max font-medium">
             Kondisi Kendaraan
@@ -474,23 +331,15 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
             <p className="text-xs text-red-600">{fieldError("id_petugas")}</p>
           )}
         </div>
-        <div className="space-y-1 text-sm md:col-span-2 lg:col-span-4">
-          <label htmlFor="keterangan" className="block w-max font-medium">
-            Keterangan
-          </label>
-          <input
-            className="w-full rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
-            type="text"
-            id="keterangan"
-            name="keterangan"
-            placeholder="Keterangan..."
-            value={formData?.keterangan || ""}
-            onChange={handleChange}
-          />
-          {fieldError("keterangan") && (
-            <p className="text-xs text-red-600">{fieldError("keterangan")}</p>
-          )}
-        </div>
+        <FormTextField
+          label="Keterangan"
+          name="keterangan"
+          id="keterangan"
+          value={formData?.keterangan || ""}
+          placeholder="Keterangan..."
+          onChange={handleChange}
+          className="md:col-span-2 lg:col-span-4"
+        />
 
         <div className="grid gap-5 md:col-span-2 md:grid-cols-2 lg:col-span-4 lg:grid-cols-4">
           <h2 className="border-b font-medium md:col-span-2 lg:col-span-4">
