@@ -140,8 +140,6 @@ const Homepage = () => {
   const [loadingFilters, setLoadingFilters] = useState(false);
   const [errorFilters, setErrorFilters] = useState<string | null>(null);
 
-  console.warn(errorFilters);
-
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   // const [loadingMarkers, setLoadingMarkers] = useState(false);
   // const [errorMarkers, setErrorMarkers] = useState<string | null>(null);
@@ -289,7 +287,7 @@ const Homepage = () => {
           onChange={setLambungIds}
           showLambung={true}
         />
-
+        <p className="text-sm text-red-500">{errorFilters}</p>
         {/* <div className="rounded-md border border-slate-200 bg-white p-3 text-xs text-slate-600">
           <div>Marker: {leafletMarkers.length}</div>
           {loadingMarkers ? (
