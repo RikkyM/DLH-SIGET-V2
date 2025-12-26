@@ -39,6 +39,11 @@ Route::middleware('web')->group(function () {
         Route::get('/lambung', [KendaraanController::class, 'filterLambung']);
     });
 
+    //icon
+    Route::get('/penugasan/{id}/icon', [PrivateController::class, 'penugasanIcon']);
+    Route::get('/data-kendaraan/{id}/{direction}/icon', [PrivateController::class, 'fotoKendaraan']);
+    Route::get('/jenis-titik-sampah/{id}/icon', [PrivateController::class, 'JTSIcon']);
+
     Route::post('/login', [AuthController::class, 'login']);
 
     Route::middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
@@ -75,10 +80,5 @@ Route::middleware('web')->group(function () {
         Route::get('/tps/tnkb', [JTSController::class, 'tnkb']);
         Route::get('/tps/lambung', [JTSController::class, 'lambung']);
         Route::get('/petugas-filter', [PetugasController::class, 'getPetugas']);
-
-        //icon
-        Route::get('/penugasan/{id}/icon', [PrivateController::class, 'penugasanIcon']);
-        Route::get('/data-kendaraan/{id}/{direction}/icon', [PrivateController::class, 'fotoKendaraan']);
-        Route::get('/jenis-titik-sampah/{id}/icon', [PrivateController::class, 'JTSIcon']);
     });
 });
