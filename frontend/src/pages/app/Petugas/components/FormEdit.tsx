@@ -15,7 +15,7 @@ import type { PetugasRes } from "../__types";
 const FormEdit = () =>
   // { refetch = () => {} }: { refetch?: () => void }
   {
-    const { isOpen, data, closeDialog } = useDialog<PetugasRes>();
+    const { data, closeDialog, mode } = useDialog<PetugasRes>();
     // const {
     //   penugasan,
     //   loading: loadingPenugasan,
@@ -86,13 +86,10 @@ const FormEdit = () =>
     //   }));
     // };
 
+    if (mode !== 'detail') return null;
+
     return (
-      <section
-        onClick={(e) => e.stopPropagation()}
-        className={`max-h-full w-full max-w-4xl space-y-3 overflow-auto rounded-sm bg-white p-3 shadow transition-all duration-300 ${
-          isOpen ? "scale-100" : "scale-95"
-        }`}
-      >
+      <>
         <h2 className="font-semibold lg:text-lg">Detail Petugas</h2>
         {/* <form onSubmit={handleSubmit} className="w-full space-y-2">
         <div className="space-y-1 text-sm">
@@ -283,7 +280,7 @@ const FormEdit = () =>
             </button>
           </div>
         </div>
-      </section>
+      </>
     );
   };
 

@@ -10,7 +10,7 @@ const EditButton = ({ data }: Props) => {
   const { openDialog } = useDialog<PetugasRes>();
   return (
     <button
-      onClick={() => openDialog('edit', data)}
+      onClick={() => openDialog('detail', data)}
       className="cursor-pointer rounded p-1 transition-colors hover:bg-gray-200"
     >
       <FileText className="max-w-5" />

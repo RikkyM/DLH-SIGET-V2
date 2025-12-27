@@ -52,7 +52,7 @@ class KendaraanRequest extends FormRequest
             'no_rangka' => $this->req() . '|string|max:25',
             'no_mesin' => $this->req() . '|string|max:25',
             'no_stnk' => $this->req() . '|string|max:25',
-            'tahun_pembuatan' => $this->req() . '|numeric|digits:4|min:2000|max:' . date('Y'),
+            'tahun_pembuatan' => $this->req() . '|numeric|digits:4|min:1990|max:' . date('Y'),
             'kapasitas_mesin' => $this->req() . '|numeric|min:1',
             'warna' => $this->req() . '|string|max:15',
             'berat' => $this->req() . '|numeric|min:1',
@@ -69,8 +69,33 @@ class KendaraanRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'id_jenis.numeric' => 'Jenis kendaraan tidak ada',
-            'id_jenis.exists' => 'Jenis kendaraan tidak ditemukan'
+            'id_jenis.required' => 'Jenis kendaraan perlu diisi.',
+            'id_jenis.numeric' => 'Jenis kendaraan tidak valid.',
+            'id_jenis.exists' => 'Jenis kendaraan tidak ditemukan.',
+            'id_department.required' => 'Department perlu diisi.',
+            'id_department.numeric' => 'Department tidak valid.',
+            'id_department.exists' => 'Department tidak ditemukan.',
+            'id_petugas.required' => 'Petugas perlu diisi.',
+            'id_petugas.numeric' => 'Petugas tidak valid.',
+            'id_petugas.exists' => 'Petugas tidak ditemukan.',
+            'no_plat.required' => 'Nomor TNKB perlu diisi.',
+            'no_plat.max' => 'Nomor TNKB tidak boleh lebih dari 10 karakter.',
+            'merk.required' => 'Merk perlu diisi.',
+            'merk.max' => 'Merk tidak boleh lebih dari 40 karakter.',
+            'lambung_baru.required' => 'Nomor lambung perlu diisi.',
+            'lambung_baru.max' => 'Nomor lambung tidak boleh lebih dari 25 karakter.',
+            'no_rangka.required' => 'Nomor rangka perlu diisi.',
+            'no_rangka.max' => 'Nomor rangka tidak boleh lebih dari 25 karakter.',
+            'no_mesin.required' => 'Nomor mesin perlu diisi.',
+            'no_mesin.max' => 'Nomor mesin tidak boleh lebih dari 25 karakter.',
+            'no_stnk.required' => 'Nomor STNK perlu diisi.',
+            'no_stnk.max' => 'Nomor STNK tidak boleh lebih dari 25 karakter.',
+            'tahun_pembuatan.required' => 'Tahun perlu diisi.',
+            'tahun_pembuatan.numeric' => 'Tahun hanya boleh diisi angka.',
+            'tahun_pembuatan.digits' => 'Tahun hanya boleh diisi 4 digit angka contoh: ' . date('Y'),
+            'tahun_pembuatan.min' => 'Tahun tidak boleh kurang dari 1990.',
+            'tahun_pembuatan.max' => 'Tahun tidak boleh lebih dari ' . date('Y'),
+            ''
         ];
     }
 }
