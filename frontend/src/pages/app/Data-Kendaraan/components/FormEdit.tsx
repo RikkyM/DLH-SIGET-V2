@@ -20,12 +20,14 @@ import { RefreshCw } from "lucide-react";
 import { usePetugasFilter } from "@/hooks/usePetugasFilter";
 import FormTextField from "./FormTextField";
 import type { ApiError, ValidationErrors } from "@/types/error.types";
+import { useDepartments } from "@/hooks/useDepartments";
 
 const FormEdit = ({ refetch }: { refetch: () => void }) => {
   const { isOpen, data, closeDialog, mode } = useDialog<KendaraanRes>();
 
   const { jenisKendaraan, loading: loadingJk } = useJenisKendaraan();
   const { petugas, loading: loadingPetugas } = usePetugasFilter();
+  const { departments, loading: loadingDept} = useDepartments();
 
   const [formData, setFormData] = useState<FormState>(initialState);
   const [foto, setFoto] = useState<FotoState>({
@@ -328,6 +330,34 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
             <p className="text-xs text-red-600">{fieldError("id_petugas")}</p>
           )}
         </div>
+        <div className="space-y-1 text-sm lg:col-span-2">
+          <label htmlFor="department" className="block w-max font-medium">
+            Department
+          </label>
+          {loadingDept ? (
+            <RefreshCw className="max-w-4.5 animate-spin" />
+          ) : (
+            <select
+              id="department"
+              name="id_department"
+              className="w-full cursor-pointer appearance-none rounded border border-gray-300 bg-transparent px-3 py-1.5 focus:ring focus:ring-blue-400 focus:outline-none"
+              value={formData?.id_department || ""}
+              onChange={handleChange}
+            >
+              <option value="">Pilih Department</option>
+              {departments.map((data, idx) => (
+                <option key={data.id ?? idx} value={data.id}>
+                  {data.nama}
+                </option>
+              ))}
+            </select>
+          )}
+          {fieldError("id_department") && (
+            <p className="text-xs text-red-600">
+              {fieldError("id_department")}
+            </p>
+          )}
+        </div>
         <FormTextField
           label="Keterangan"
           name="keterangan"
@@ -335,7 +365,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           value={formData?.keterangan || ""}
           placeholder="Keterangan..."
           onChange={handleChange}
-          className="md:col-span-2 lg:col-span-4"
+          className="lg:col-span-2"
         />
 
         <div className="grid gap-5 md:col-span-2 md:grid-cols-2 lg:col-span-4 lg:grid-cols-4">

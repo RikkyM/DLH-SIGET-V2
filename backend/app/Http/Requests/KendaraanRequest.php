@@ -52,12 +52,13 @@ class KendaraanRequest extends FormRequest
             'no_rangka' => $this->req() . '|string|max:25',
             'no_mesin' => $this->req() . '|string|max:25',
             'no_stnk' => $this->req() . '|string|max:25',
-            'tahun_pembuatan' => $this->req() . '|integer|digits:4|min:2000|max:' . date('Y'),
-            'kapasitas_mesin' => $this->req() . '|integer|min:1',
+            'tahun_pembuatan' => $this->req() . '|numeric|digits:4|min:2000|max:' . date('Y'),
+            'kapasitas_mesin' => $this->req() . '|numeric|min:1',
             'warna' => $this->req() . '|string|max:15',
-            'berat' => $this->req() . '|integer|min:1',
+            'berat' => $this->req() . '|numeric|min:1',
             'jumlah_kontainer' => $this->req() . '|string|max:10',
             'kondisi' => $this->req() . '|string|in:BAIK,RUSAK RINGAN,RUSAK BERAT',
+            'keterangan' => 'string|max:255',
             'foto_depan' => $this->fotoRule('foto_depan'),
             'foto_belakang' => $this->fotoRule('foto_belakang'),
             'foto_kanan' => $this->fotoRule('foto_kanan'),
@@ -68,7 +69,8 @@ class KendaraanRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'id_jenis.exists' => 'Jenis kendaraan tidak ada'
+            'id_jenis.numeric' => 'Jenis kendaraan tidak ada',
+            'id_jenis.exists' => 'Jenis kendaraan tidak ditemukan'
         ];
     }
 }

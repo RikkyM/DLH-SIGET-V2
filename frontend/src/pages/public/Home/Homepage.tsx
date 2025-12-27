@@ -59,6 +59,7 @@ type MapMarker = {
   panjang_jalur: string;
   jenis: string;
   no_plat: string;
+  armada: string;
   lambung: string;
   jenis_kendaraan: string;
   icon?: string | null;
@@ -394,7 +395,7 @@ const Homepage = () => {
                           {m?.jenis ?? "-"}
                         </div>
                         <div className="text-xs text-slate-600">
-                          {m?.no_plat ?? "-"}, ({m?.lambung})
+                          {m?.armada ?? "-"}, ({m?.lambung})
                         </div>
                         <div className="text-xs text-slate-600">
                           {m?.jenis_kendaraan ?? "-"}

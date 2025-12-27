@@ -116,6 +116,8 @@ const FormTambah = () => {
       }
     });
 
+    console.log(formData)
+
     setLoading(true);
     setErrors({});
 
@@ -250,6 +252,7 @@ const FormTambah = () => {
           name="kapasitas_mesin"
           placeholder="Masukkan kapasitas mesin..."
           value={formData?.kapasitas_mesin || ""}
+          error={fieldError("kapasitas_mesin")}
           onChange={handleChange}
         />
         <FormTextField
@@ -258,6 +261,7 @@ const FormTambah = () => {
           id="warna"
           placeholder="Masukkan warna kendaraan..."
           value={formData?.warna || ""}
+          error={fieldError("warna")}
           onChange={handleChange}
         />
         <FormTextField
@@ -266,6 +270,7 @@ const FormTambah = () => {
           id="berat"
           placeholder="Masukkan berat kendaraan..."
           value={formData?.berat || ""}
+          error={fieldError("berat")}
           onChange={handleChange}
         />
         <FormTextField
@@ -274,6 +279,7 @@ const FormTambah = () => {
           id="jumlah_kontainer"
           placeholder="Masukkan jumlah kontainer..."
           value={formData?.jumlah_kontainer || ""}
+          error={fieldError("jumlah_kontainer")}
           onChange={handleChange}
         />
         <div className="space-y-1 text-sm">
