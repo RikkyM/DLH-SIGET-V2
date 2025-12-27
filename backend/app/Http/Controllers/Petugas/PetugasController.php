@@ -64,6 +64,9 @@ class PetugasController extends Controller
             ->whereHas('department', function ($q) {
                 $q->whereNotIn('nama', ['Our Company', 'NON AKTIF', 'SEKRETARIAT']);
             })
+            ->whereHas('penugasan', function ($q) {
+                $q->whereLike('nama', "%sopir%");
+            })
             ->orderBy('nama')
             ->get()
             ->values();

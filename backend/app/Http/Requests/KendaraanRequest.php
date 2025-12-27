@@ -55,7 +55,7 @@ class KendaraanRequest extends FormRequest
             'tahun_pembuatan' => $this->req() . '|integer|digits:4|min:2000|max:' . date('Y'),
             'kapasitas_mesin' => $this->req() . '|integer|min:1',
             'warna' => $this->req() . '|string|max:15',
-            'berat' => $this->req() . '|string|max:10',
+            'berat' => $this->req() . '|integer|min:1',
             'jumlah_kontainer' => $this->req() . '|string|max:10',
             'kondisi' => $this->req() . '|string|in:BAIK,RUSAK RINGAN,RUSAK BERAT',
             'foto_depan' => $this->fotoRule('foto_depan'),

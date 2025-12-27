@@ -17,7 +17,7 @@ type State = {
 };
 
 const FormEdit = ({ refetch }: { refetch: () => void }) => {
-  const { isOpen, data, closeDialog } = useDialog<Penugasan>();
+  const { isOpen, data, closeDialog, mode } = useDialog<Penugasan>();
 
   const [formData, setFormData] = useState<State>({
     nama: "",
@@ -91,13 +91,10 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
 
   const fieldError = (name: string) => errors?.[name]?.[0];
 
+  if (mode !== "edit") return null;
+
   return (
-    <section
-      onClick={(e) => e.stopPropagation()}
-      className={`max-h-full w-full max-w-xl space-y-3 overflow-auto rounded-sm bg-white p-3 shadow transition-all duration-300 ${
-        isOpen ? "scale-100" : "scale-95"
-      }`}
-    >
+    <>
       <h2 className="font-semibold lg:text-lg">Edit Penugasan</h2>
       <form
         onSubmit={handleSubmit}
@@ -147,7 +144,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
               href={`${import.meta.env.VITE_API_BASE}/api/penugasan/${data.id}/icon?v=${encodeURIComponent(data.updated_at ?? "")}`}
               target="_blank"
               rel="noreferrer noopener"
-              className="hover:underline inline-block text-sm m-1 hover:text-blue-500"
+              className="m-1 inline-block text-sm text-blue-500 hover:underline"
             >
               Lihat Icon
             </a>
@@ -170,7 +167,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           </button>
         </div>
       </form>
-    </section>
+    </>
   );
 };
 

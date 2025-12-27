@@ -11,11 +11,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
+use RuntimeException;
 
 class KendaraanController extends Controller
 {
+    private function fotoField(): array
+    {
+        return ['foto_depan', 'foto_belakang', 'foto_kanan', 'foto_kiri'];
+    }
+
     public function filterLambung(Request $request)
     {
         $q = trim((string) $request->query('q', ''));
@@ -111,7 +118,7 @@ class KendaraanController extends Controller
             ->when(!empty($department), fn($data) => $data->where('id_department', $department))
             ->when(!empty($jenisKendaraan), fn($data) => $data->where('id_jenis', $jenisKendaraan))
             ->when(!empty($tahunPembuatan), fn($data) => $data->where('tahun_pembuatan', $tahunPembuatan))
-            ->orderBy('merk', 'asc')
+            ->orderBy('created_at', 'desc')
             ->paginate($perPage)
             ->withQueryString();
 
@@ -130,6 +137,80 @@ class KendaraanController extends Controller
         );
     }
 
+    public function storeKendaraan(KendaraanRequest $request)
+    {
+        $payload = $request->validated();
+
+        $getNoPlat = $payload['no_plat'];
+        $noPlat  = str_replace(' ', '', $getNoPlat);
+        $getLambung = $payload['lambung_baru'];
+        $lambung = str_replace(' ', '', $getLambung);
+        $department = str_replace(' ', '', Department::whereKey($payload['id_department'])->value('nama'));
+
+        $paths = [];
+        $storedPaths = [];
+
+        DB::beginTransaction();
+
+        try {
+            foreach ($this->fotoField() as $field) {
+                if (!$request->hasFile($field)) continue;
+
+                $file = $request->file($field);
+
+                if (!$file || !$file->isValid()) {
+                    throw new RuntimeException("Upload file '$field' tidak valid.");
+                }
+
+                $side = str_replace('foto_', '', $field);
+
+                $fileName = "{$noPlat}_{$lambung}_{$department}_{$side}." . $file->getClientOriginalExtension();
+
+                $dir = $file->storeAs('kendaraan', $fileName, 'local');
+                $paths[$field] = $dir;
+                $storedPaths[] = $dir;
+            }
+
+            $payload['foto_kendaraan'] = $paths;
+
+            if (!empty($payload['id_petugas'])) {
+                $payload['nama_sopir'] = Petugas::whereKey($payload['id_petugas'])->value('nama');
+            }
+
+            if (!empty($payload['id_department'])) {
+                $payload['uptd'] = Department::whereKey($payload['id_department'])->value('nama');
+            }
+
+            DataKendaraan::create($payload);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Berhasil menambahkan data kendaraan.'
+            ], 200);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            if (!empty($storedPaths)) {
+                foreach ($storedPaths as $p) {
+                    try {
+                        Storage::disk('local')->delete($p);
+                    } catch (\Throwable $ignore) {
+                    }
+                }
+
+                report($e);
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Gagal menambahkan data kendaraan.',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
+    }
+
     public function updateKendaraan(KendaraanRequest $request, $id)
     {
         $data = DataKendaraan::with('department')->findOrFail($id);
@@ -144,9 +225,9 @@ class KendaraanController extends Controller
         $lambung = str_replace(' ', '', $getLambung);
         $department = str_replace(' ', '', $data->department->nama);
 
-        $fotoFields = ['foto_depan', 'foto_belakang', 'foto_kanan', 'foto_kiri'];
+        // $fotoFields = ['foto_depan', 'foto_belakang', 'foto_kanan', 'foto_kiri'];
 
-        foreach ($fotoFields as $field) {
+        foreach ($this->fotoField() as $field) {
             if ($request->hasFile($field)) {
                 if (!empty($paths[$field])) {
                     Storage::disk('local')->delete($paths[$field]);
@@ -169,7 +250,7 @@ class KendaraanController extends Controller
             $payload['nama_sopir'] = Petugas::whereKey($payload['id_petugas'])->value('nama');
         }
 
-        if (!empty($payload['id_jenis'])) {
+        if (!empty($payload['id_department'])) {
             $payload['uptd'] = Department::whereKey($payload['id_department'])->value('nama');
         }
 

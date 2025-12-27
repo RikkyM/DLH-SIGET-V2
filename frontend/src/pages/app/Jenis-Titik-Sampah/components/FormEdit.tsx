@@ -17,7 +17,7 @@ type State = {
 };
 
 const FormEdit = ({ refetch }: { refetch: () => void }) => {
-  const { isOpen, data, closeDialog } = useDialog<JTS>();
+  const { isOpen, data, closeDialog, mode } = useDialog<JTS>();
 
   const [formData, setFormData] = useState<State>({
     nama: "",
@@ -91,13 +91,10 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
 
   const fieldError = (name: string) => errors?.[name]?.[0];
 
+  if (mode !== 'edit') return null
+
   return (
-    <section
-      onClick={(e) => e.stopPropagation()}
-      className={`max-h-full w-full max-w-xl space-y-3 overflow-auto rounded-sm bg-white p-3 shadow transition-all duration-300 ${
-        isOpen ? "scale-100" : "scale-95"
-      }`}
-    >
+    <>
       <h2 className="font-semibold lg:text-lg">Edit Jenis Titik Sampah</h2>
       <form
         onSubmit={handleSubmit}
@@ -148,7 +145,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
               href={`${import.meta.env.VITE_API_BASE}/api/jenis-titik-sampah/${data.id}/icon?v=${encodeURIComponent(data.updated_at ?? "")}`}
               target="_blank"
               rel="noreferrer noopener"
-              className="m-1 inline-block text-sm hover:text-blue-500 hover:underline"
+              className="m-1 inline-block text-sm  hover:underline text-blue-500"
             >
               Lihat Icon
             </a>
@@ -171,7 +168,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           </button>
         </div>
       </form>
-    </section>
+    </>
   );
 };
 

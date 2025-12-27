@@ -22,7 +22,7 @@ import FormTextField from "./FormTextField";
 import type { ApiError, ValidationErrors } from "@/types/error.types";
 
 const FormEdit = ({ refetch }: { refetch: () => void }) => {
-  const { isOpen, data, closeDialog } = useDialog<KendaraanRes>();
+  const { isOpen, data, closeDialog, mode } = useDialog<KendaraanRes>();
 
   const { jenisKendaraan, loading: loadingJk } = useJenisKendaraan();
   const { petugas, loading: loadingPetugas } = usePetugasFilter();
@@ -110,14 +110,14 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
 
     const fd = new FormData();
 
-    Object.entries(formData).forEach(([Key, value]) => {
+    Object.entries(formData).forEach(([key, value]) => {
       if (value === null || value === "") return;
-      fd.append(Key, String(value));
+      fd.append(key, String(value));
     });
 
-    Object.entries(foto).forEach(([Key, file]) => {
+    Object.entries(foto).forEach(([key, file]) => {
       if (file) {
-        fd.append(Key, file);
+        fd.append(key, file);
       }
     });
 
@@ -149,13 +149,10 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
 
   const fieldError = (name: string) => errors?.[name]?.[0];
 
+  if (mode !== "edit") return null;
+
   return (
-    <section
-      onClick={(e) => e.stopPropagation()}
-      className={`max-h-full w-full max-w-4xl space-y-3 overflow-auto rounded-sm bg-white p-3 shadow transition-all duration-300 ${
-        isOpen ? "scale-100" : "scale-95"
-      }`}
-    >
+    <>
       <h2 className="font-semibold lg:text-lg">Edit Data Kendaraan</h2>
       <form
         onSubmit={handleSubmit}
@@ -218,7 +215,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           onChange={handleChange}
         />
         <FormTextField
-          label="no_rangka"
+          label="No. Rangka"
           name="no_rangka"
           id="no_rangka"
           value={formData?.no_rangka || ""}
@@ -473,7 +470,7 @@ const FormEdit = ({ refetch }: { refetch: () => void }) => {
           </button>
         </div>
       </form>
-    </section>
+    </>
   );
 };
 

@@ -57,6 +57,7 @@ Route::middleware('web')->group(function () {
         Route::get('/penampungan-sementara', [JTSController::class, 'index']);
         Route::put('/penampungan-sementara/{id}', [JTSController::class, 'updateTps']);
         Route::get('/data-kendaraan', [KendaraanController::class, 'index']);
+        Route::post('/data-kendaraan', [KendaraanController::class, 'storeKendaraan']);
         Route::put('/data-kendaraan/{id}', [KendaraanController::class, 'updateKendaraan']);
         Route::get('/penugasans', [PenugasanController::class, 'index']);
         Route::put('/penugasan/{id}', [PenugasanController::class, 'updatePenugasan']);

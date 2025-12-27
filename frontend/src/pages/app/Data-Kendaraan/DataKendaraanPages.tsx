@@ -10,11 +10,12 @@ import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useDialog } from "@/hooks/useDialog";
 import Dialog from "@/components/ui/Dialog";
 import FormEdit from "./components/FormEdit";
+import FormTambah from "./components/FormTambah";
 
 const DataKendaraanPages = () => {
   useDocumentTitle("Data Kendaraan");
 
-  const { mode, openDialog } = useDialog();
+  const { openDialog } = useDialog();
 
   const [search, setSearch] = useState("");
   const [unitKerja, setUnitKerja] = useState<number | undefined>();
@@ -258,7 +259,10 @@ const DataKendaraanPages = () => {
         </div>
         <Pagination meta={meta} onPageChange={setPage} />
       </div>
-      <Dialog>{mode === "edit" && <FormEdit refetch={fetch} />}</Dialog>
+      <Dialog size="max-w-4xl">
+        <FormEdit refetch={fetch} />
+        <FormTambah />
+      </Dialog>
     </section>
   );
 };

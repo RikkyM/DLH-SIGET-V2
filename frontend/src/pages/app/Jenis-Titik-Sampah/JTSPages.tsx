@@ -11,7 +11,7 @@ import FormEdit from "./components/FormEdit";
 const JTSPages = () => {
   useDocumentTitle("Jenis Titik Sampah");
 
-  const { mode, openDialog } = useDialog();
+  const { openDialog } = useDialog();
 
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
@@ -156,7 +156,9 @@ const JTSPages = () => {
         </div>
         <Pagination meta={meta} onPageChange={setPage} />
       </div>
-      <Dialog>{mode === "edit" && <FormEdit refetch={fetch} />}</Dialog>
+      <Dialog size="max-w-xl">
+        <FormEdit refetch={fetch} />
+      </Dialog>
     </section>
   );
 };
